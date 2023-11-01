@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "886906283637",
+    "project_id": "dailyfootprint-aeac7",
+    "storage_bucket": "dailyfootprint-aeac7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886906283637:android:87d118087b95e2e756fa3c",
+        "android_client_info": {
+          "package_name": "com.example.dailyfootprint"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVvhvbNwd41AHxr6546H4v9RA2DMA-qOA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
