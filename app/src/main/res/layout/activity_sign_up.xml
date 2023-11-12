@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.login.StartActivity">
+    android:background="@color/background_gray"
+    tools:context=".ui.login.SignUpActivity">
 
     <ImageView
+        android:id="@+id/singupview_logo_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
@@ -15,15 +17,50 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/singupview_logo_image"
+        >
+
+    <EditText
+        android:id="@+id/singupview_name_edittext"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="50dp"
+        android:background="@drawable/round_white_button"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="이름을 입력하세요."
+        android:paddingLeft="16dp"
+        />
+
+        <Button
+            android:id="@+id/singupview_duplicate_button"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:background="@drawable/round_green_button"
+            android:layout_marginEnd="16dp"
+            android:text="중복확인"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+
+            />
+
+</LinearLayout>
+
+
+
     <Button
-        android:id="@+id/startview_start_button"
+        android:id="@+id/singupview_signup_button"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/round_green_button"
-        android:text="START"
+        android:text="SIGN UP"
         android:textStyle="bold"
         android:textColor="@android:color/white"
         android:textSize="36sp"
