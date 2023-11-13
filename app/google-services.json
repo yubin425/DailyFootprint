@@ -12,7 +12,20 @@
           "package_name": "com.example.dailyfootprint"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "886906283637-2lf5ii855166t1qnflp9r44leipcs9lk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dailyfootprint",
+            "certificate_hash": "1e04946b5825b3c73711e2beaad9e786cea22ee6"
+          }
+        },
+        {
+          "client_id": "886906283637-5363vlhbjnraj5ggbumv7ro815kjqfof.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCVvhvbNwd41AHxr6546H4v9RA2DMA-qOA"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "886906283637-5363vlhbjnraj5ggbumv7ro815kjqfof.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
