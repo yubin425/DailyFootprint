@@ -8,7 +8,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.dailyfootprint.databinding.ActivityMainBinding
-
+import com.example.dailyfootprint.ui.GPS.GPSActivity
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -31,5 +31,18 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // 앱이 시작될 때 권한을 확인하고 요청
+        checkAndRequestPermission()
+    }
+
+    private lateinit var gpsActivity: GPSActivity
+    private fun checkAndRequestPermission() {
+        gpsActivity = GPSActivity(this)
+
+        // 위치 권한이 허용 되어 있지 않으면 요청
+        if (!gpsActivity.isLocationPermitted()) {
+            gpsActivity.requestPermission()
+        }
     }
 }
