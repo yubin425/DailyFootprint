@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.dailyfootprint"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.dailyfootprint"
@@ -59,4 +59,11 @@ dependencies {
 
     implementation ("com.google.android.gms:play-services-location:21.0.1")
 
+    // Add the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-auth-ktx")
+
+    // Also add the dependency for the Google Play services library and specify its version
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.firebase:firebase-database-ktx")
 }
