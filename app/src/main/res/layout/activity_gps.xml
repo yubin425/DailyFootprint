@@ -8,7 +8,7 @@
 
     <!-- 여기서 바로 지도를 추가합니다 -->
     <fragment
-        android:id="@+id/map"
+        android:id="@+id/mapFragment"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

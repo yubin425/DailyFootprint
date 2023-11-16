@@ -8,7 +8,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.dailyfootprint.databinding.ActivityMainBinding
-import com.example.dailyfootprint.ui.GPS.GPSActivity
+import com.example.dailyfootprint.ui.Map.GPSActivity
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

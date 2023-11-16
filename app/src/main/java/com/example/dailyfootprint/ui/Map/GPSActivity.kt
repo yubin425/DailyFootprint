@@ -1,22 +1,24 @@
-package com.example.dailyfootprint.ui.GPS
+package com.example.dailyfootprint.ui.Map
 
 import android.Manifest
-
-import android.os.Bundle
+import android.R
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.widget.Button
+
+import android.os.Bundle
 import android.widget.TextView
-import com.google.android.gms.location.LocationServices
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import android.annotation.SuppressLint
+
+import android.location.Location
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
+import com.google.android.gms.maps.SupportMapFragment
+
+import com.google.android.gms.maps.*
 
 class GPSActivity(private val context: Context) : AppCompatActivity() {
     private val REQUEST_CODE_LOCATION = 1
@@ -24,10 +26,13 @@ class GPSActivity(private val context: Context) : AppCompatActivity() {
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
+    var googleMap: GoogleMap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.example.dailyfootprint.R.layout.activity_gps)
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
+        mapFragment.getMapAsync(this)
     }
 
     fun requestPermission(){
@@ -65,6 +70,8 @@ class GPSActivity(private val context: Context) : AppCompatActivity() {
         }
         return true
     }
+
+
 
     @SuppressLint("MissingPermission")
     private fun calculateDistance(textView: TextView) {
