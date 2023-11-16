@@ -31,8 +31,6 @@ class GPSActivity(private val context: Context) : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(com.example.dailyfootprint.R.layout.activity_gps)
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
-        mapFragment.getMapAsync(this)
     }
 
     fun requestPermission(){

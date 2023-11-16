@@ -35,6 +35,7 @@ class MapsActivity(private val context: Context) : AppCompatActivity(), OnMapRea
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
     private lateinit var currentLocation: LatLng
+    private val DEFAULT_ZOOM_LEVEL = 17f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,10 +61,10 @@ class MapsActivity(private val context: Context) : AppCompatActivity(), OnMapRea
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        if (::currentLocation.isInitialized) {
+            mMap.addMarker(MarkerOptions().position(currentLocation).title("Your Location"))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, DEFAULT_ZOOM_LEVEL))
+        }
     }
 
     fun requestPermission(){
