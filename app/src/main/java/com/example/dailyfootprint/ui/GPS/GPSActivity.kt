@@ -1,16 +1,22 @@
 package com.example.dailyfootprint.ui.GPS
 
 import android.Manifest
-import android.annotation.TargetApi
+
 import android.os.Bundle
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.widget.Button
+import android.widget.TextView
+import com.google.android.gms.location.LocationServices
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import android.annotation.SuppressLint
+import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 
 class GPSActivity(private val context: Context) : AppCompatActivity() {
     private val REQUEST_CODE_LOCATION = 1
@@ -59,4 +65,29 @@ class GPSActivity(private val context: Context) : AppCompatActivity() {
         }
         return true
     }
+
+    @SuppressLint("MissingPermission")
+    private fun calculateDistance(textView: TextView) {
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        if(!isLocationPermitted()) {
+            requestPermission()
+        }
+        else {
+            fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null).
+            addOnSuccessListener { success: Location? ->
+                success?.let { location ->
+                    val selectedLocation = Location("selectedPoint").apply {
+                        latitude = 0.0
+                        longitude = 0.0
+                    }
+                    textView.text = "${location.distanceTo(selectedLocation)}M"
+                }
+            }
+                .addOnFailureListener { fail ->
+                    textView.text = fail.localizedMessage
+                }
+        }
+    }
+
+
 }

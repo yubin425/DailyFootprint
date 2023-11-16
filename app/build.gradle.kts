@@ -56,9 +56,6 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
-
-    implementation ("com.google.android.gms:play-services-location:21.0.1")
-
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-auth-ktx")
@@ -66,4 +63,11 @@ dependencies {
     // Also add the dependency for the Google Play services library and specify its version
     implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation("com.google.firebase:firebase-database-ktx")
+
+    //gps 권한
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+    //구글맵 권한
+    implementation ("com.google.android.gms:play-services-maps:18.2.0")
+    implementation ("com.google.android.gms:play-services-places:17.1.0")
 }
