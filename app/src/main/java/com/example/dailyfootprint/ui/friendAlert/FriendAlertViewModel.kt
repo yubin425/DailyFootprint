@@ -158,19 +158,7 @@ class FriendAlertViewModel : ViewModel(){
             })
     }
 
-    fun testFunction() {
-        val friend = Friend(Random.nextInt().toString(), FirebaseManager.getUID(), false)
-        val databaseReference = FirebaseManager.firebaseDatabase.reference.child("friend")
 
-        // 새로운 친구 요청을 데이터베이스에 추가
-        databaseReference.push().setValue(friend)
-            .addOnSuccessListener {
-                // 데이터 저장 성공 처리
-            }
-            .addOnFailureListener {
-                // 데이터 저장 실패 처리
-            }
-    }
 }
 
 data class FriendAlertInfo(

@@ -23,10 +23,6 @@ class FriendAlertActivity : AppCompatActivity() {
             adaptor.notifyDataSetChanged() // 어댑터에 데이터가 변경되었음을 알림
         })
 
-        binding.testButton.setOnClickListener {
-            viewModel.testFunction()
-        }
-
 
         setContentView(binding.root)
     }
