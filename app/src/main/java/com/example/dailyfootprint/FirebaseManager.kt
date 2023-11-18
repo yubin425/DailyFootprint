@@ -16,6 +16,10 @@ object FirebaseManager {
         FirebaseAuth.getInstance()
     }
 
+    fun getUID() : String {
+        return authInstance.currentUser!!.uid.toString()
+    }
+
     // FirebaseAuth 객체에 접근하는 함수
     fun getFirebaseAuthInstance(): FirebaseAuth {
         return authInstance
