@@ -4,6 +4,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.mypage.MyPageActivity">
+    tools:context=".ui.mypage.MyPageActivity"
+    android:background="@color/background_gray"
+    >
+
+    <ImageView
+        android:id="@+id/mypageview_logo_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:src="@drawable/startview_logo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/mypageview_logout_button"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/round_white_button"
+        android:enabled="false"
+        android:text="로그아웃"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/mypageview_quit_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/mypageview_quit_button"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/round_red_button"
+        android:enabled="false"
+        android:text="회원탈퇴"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
