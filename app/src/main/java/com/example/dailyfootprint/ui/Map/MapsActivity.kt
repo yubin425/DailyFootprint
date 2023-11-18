@@ -3,15 +3,18 @@ package com.example.dailyfootprint.ui.Map
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.dailyfootprint.R
+import com.google.android.gms.common.api.Status
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -23,7 +26,12 @@ import com.example.dailyfootprint.databinding.ActivityMapsBinding
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -36,6 +44,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     )
     private lateinit var currentLocation: LatLng
     private val DEFAULT_ZOOM_LEVEL = 17f
+    private val TAG = "MapsActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +52,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Places 라이브러리 초기화
+        if (!Places.isInitialized()) {
+            Places.initialize(applicationContext, "AIzaSyB_7LSzaKbT7-EhBo7-qzl6APfc7uFczfs")
+        }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -60,6 +73,39 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
+        // Initialize the AutocompleteSupportFragment
+        val autocompleteFragment =
+            supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+
+        // Specify the types of place data to return
+        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG))
+
+
+        // Set up a PlaceSelectionListener to handle the selected place
+        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+            override fun onPlaceSelected(place: Place) {
+                // Handle the selected place, for example, you can move the camera to the selected place
+                val selectedLocation = place.latLng
+                if (selectedLocation != null) {
+                    mMap.addMarker(MarkerOptions().position(selectedLocation).title(place.name))
+                    mMap.moveCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            selectedLocation,
+                            DEFAULT_ZOOM_LEVEL
+                        )
+                    )
+                }
+                // 추가: Log를 사용하여 디버깅 메시지 출력
+                Log.d(TAG, "onPlaceSelected called. Place: ${place.name}, LatLng: $selectedLocation")
+                Log.d(TAG, "Place details: ${place.toString()}")
+            }
+
+            override fun onError(status: Status) {
+                // Handle the error
+                Log.i(TAG, "An error occurred: $status")
+            }
+        })
         CurrentLocation()
 
     }
