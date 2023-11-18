@@ -25,7 +25,7 @@ import com.google.android.gms.location.Priority
 
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 
-class MapsActivity(private val context: Context) : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
@@ -60,26 +60,23 @@ class MapsActivity(private val context: Context) : AppCompatActivity(), OnMapRea
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        CurrentLocation()
 
-        if (::currentLocation.isInitialized) {
-            mMap.addMarker(MarkerOptions().position(currentLocation).title("Your Location"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, DEFAULT_ZOOM_LEVEL))
-        }
     }
 
     fun requestPermission(){
         //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { //28버전 이상에서 실행 가능
         if (ActivityCompat.checkSelfPermission(
-                context,
+                this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
             || ActivityCompat.checkSelfPermission(
-                context,
+                this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
-                context as Activity,
+                this as Activity,
                 permissionsLocation ,
                 REQUEST_CODE_LOCATION
             )
@@ -93,7 +90,7 @@ class MapsActivity(private val context: Context) : AppCompatActivity(), OnMapRea
     fun isLocationPermitted(): Boolean {
         for (perm in permissionsLocation ) {
             if (ContextCompat.checkSelfPermission(
-                    context,
+                    this,
                     perm
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
@@ -103,10 +100,8 @@ class MapsActivity(private val context: Context) : AppCompatActivity(), OnMapRea
         return true
     }
 
-
-
     @SuppressLint("MissingPermission")
-    private fun calculateDistance(textView: TextView) {
+    private fun CurrentLocation() {
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         if(!isLocationPermitted()) {
             requestPermission()
@@ -116,10 +111,14 @@ class MapsActivity(private val context: Context) : AppCompatActivity(), OnMapRea
             addOnSuccessListener { success: Location? ->
                 success?.let {location ->
                     currentLocation = LatLng(location.latitude, location.longitude)
+
+                    // 무사히 위치 정보를 가져오면 현재 위치에 마커 추가
+                    mMap.addMarker(MarkerOptions().position(currentLocation).title("Your Location"))
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, DEFAULT_ZOOM_LEVEL))
                 }
             }
                 .addOnFailureListener { fail ->
-                    textView.text = fail.localizedMessage
+                    currentLocation = LatLng(0.0, 0.0)
                 }
         }
     }
