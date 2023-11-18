@@ -4,6 +4,7 @@ import FirebaseManager
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.ActivityMyPageBinding
@@ -23,6 +24,7 @@ class MyPageActivity : AppCompatActivity() {
             // 로그아웃 버튼 클릭
             // 로그아웃 처리
             FirebaseManager.authInstance.signOut()
+            Log.w("logout","clicked")
             // StartActivity로 이동
             navigateToStartActivity()
         }
@@ -30,7 +32,10 @@ class MyPageActivity : AppCompatActivity() {
         binding.mypageviewQuitButton.setOnClickListener {
             val currentUser = FirebaseManager.authInstance.currentUser
             if (currentUser != null) {
+                Log.w("quit","current user is not null")
                 deleteUserAccount(currentUser.uid)
+            } else {
+                Log.w("quit","current user not null")
             }
         }
 
