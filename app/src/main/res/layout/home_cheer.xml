@@ -15,15 +15,15 @@
         app:layout_constraintVertical_bias="0.5">
 
         <Button
-            android:id="@+id/button"
-            android:layout_width="400dp"
+            android:id="@+id/backgroundbutton"
+            android:layout_width="match_parent"
             android:layout_height="108sp"
+            android:background="@drawable/round_green_button"
             android:text="시작이 반이래요"
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:background="@drawable/round_green_button"/>
+            android:textStyle="bold" />
 
     </FrameLayout>
 

@@ -13,13 +13,12 @@
 
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/backgroundbutton"
             android:layout_width="match_parent"
             android:layout_height="108sp"
             android:background="@drawable/round_white_button"
-            android:text=" "
+            android:text=""
             android:textAlignment="center"
-            android:textColor="@color/background_gray"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -35,21 +34,21 @@
         app:layout_constraintStart_toStartOf="@+id/frameLayout"
         app:layout_constraintTop_toTopOf="@+id/frameLayout">
 
-        <TextView
-            android:id="@+id/textView4"
+        <TextClock
+            android:id="@+id/textClock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="2023년 10월 23일"
-            android:textColor="#000000"
+            android:format12Hour="yyyy년 MM월 dd일"
+            android:format24Hour="yyyy년 MM월 dd일"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textView6"
+        <TextClock
+            android:id="@+id/textClock2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="17:40:20"
-            android:textColor="#000000"
+            android:format12Hour="hh:mm:ss"
+            android:format24Hour="hh:mm:ss"
             android:textSize="38sp"
             android:textStyle="bold" />
 
