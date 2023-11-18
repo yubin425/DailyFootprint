@@ -91,7 +91,7 @@ class FriendAlertViewModel : ViewModel(){
 
 
         // 파이어베이스에서 친구 요청 정보 업데이트
-        val databaseReference = FirebaseManager.databaseReference.child("friendRequests")
+        val databaseReference = FirebaseManager.databaseReference.child("friend")
         updateFriendRequest(databaseReference, uid, friendCode)
 
         // 각 사용자의 친구 목록에 상대방 추가
