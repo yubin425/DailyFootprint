@@ -1,6 +1,6 @@
 package com.example.dailyfootprint.ui.login
 
-import FirebaseManager.firebaseDatabase
+import FirebaseManager
 import FirebaseManager.userDatabaseReference
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import com.example.dailyfootprint.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 
 class SignUpViewModel : ViewModel() {
@@ -85,7 +84,7 @@ class SignUpViewModel : ViewModel() {
             val newUser = User (
                 userCode = uid,
                 userName = _name.value!!,
-                succesData = ArrayList<String>(),
+                successData = ArrayList<String>(),
                 friendList = ArrayList<String>()
             )
             userDatabaseReference.child(uid).setValue(newUser)
