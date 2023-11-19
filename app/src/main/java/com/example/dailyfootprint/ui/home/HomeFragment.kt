@@ -48,6 +48,8 @@ val datachalllist = listOf(exampleChallenge, exampleChallenge, exampleChallenge,
 // 위치사용
 // 성공과 반응
 // 데이터 올리는 것 까지 <- 문서와 맞춰야함
+// 프로필이랑 알람은 뭔데?????? -> 일단 눌렀을때 반응으로바꾸기
+// 인증시 알림참으로 뜨게하는것도 나쁘지 않을듯
 
 // 임시데이터
 
