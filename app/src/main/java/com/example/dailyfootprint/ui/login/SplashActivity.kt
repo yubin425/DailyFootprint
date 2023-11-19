@@ -8,6 +8,7 @@ import android.os.Handler
 import android.util.Log
 import com.example.dailyfootprint.MainActivity
 import com.example.dailyfootprint.R
+import com.example.dailyfootprint.ui.friendAlert.FriendAlertActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -26,14 +27,18 @@ class SplashActivity : AppCompatActivity() {
 
     fun gotoMainScreen() {
         startActivity(Intent(this, MainActivity::class.java))
+        // startActivity(Intent(this, FriendAlertActivity::class.java))
+        finish()
     }
 
     fun gotoStartScreen() {
         startActivity(Intent(this, StartActivity::class.java))
+        finish()
     }
 
     fun gotoSignUpScreen() {
         startActivity(Intent(this, SignUpActivity::class.java))
+        finish()
     }
 
     private fun checkFirebaseAccount() {
@@ -70,7 +75,6 @@ class SplashActivity : AppCompatActivity() {
             // 여기서 로그인 처리를 진행하고, 로그인 성공 후 위의 로직을 반복합니다.
             Log.w("not already exist","in user")
             gotoStartScreen()
-
         }
 
     }
