@@ -5,11 +5,13 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -45,6 +47,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var currentLocation: LatLng
     private val DEFAULT_ZOOM_LEVEL = 17f
     private val TAG = "MapsActivity"
+    private var selectedLocation: LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,7 +110,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
         CurrentLocation()
-
+        val roundGreenButton: Button = findViewById(R.id.roundGreenButton)
+        roundGreenButton.setOnClickListener {
+            // 버튼 클릭 시, AnotherActivity로 이동하면서 위치 정보 전달
+            selectedLocation?.let {
+                //val intent = Intent(this, AnotherActivity::class.java)
+                //intent.putExtra("latitude", it.latitude)
+                //intent.putExtra("longitude", it.longitude)
+                //startActivity(intent)
+            }
+            Log.i(TAG, "BUTTON CLICKED")
+        }
     }
 
     fun requestPermission(){
