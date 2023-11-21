@@ -63,12 +63,10 @@ package com.example.dailyfootprint.ui.friends
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.FragmentFriendsBinding
 import com.example.dailyfootprint.model.User
@@ -90,14 +88,17 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.plusButton.setOnClickListener {
-            Log.v("test", "check")
             val intent = Intent(activity, AddFriendActivity::class.java)
             startActivity(intent)
         }
 
-        data.add(User(userCode = "UserCode", userName = "Andrew", successData = arrayListOf("Success", "Data"), friendList = arrayListOf("Tom", "Tompson")))
+        // 임의의 더미 데이터 생성
+        val dateList = ArrayList<String>()
+        val dateToAdd = "2023-11-10"
+        dateList.add(dateToAdd)
 
-        binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 20) // Adjust the spanCount as needed
+        data.add(User(userCode = "UserCode", userName = "Andrew", successData = dateList, friendList = arrayListOf("Tom", "Tompson")))
+
         binding.recyclerView.adapter = UserGrassAdapter(data)
 
 
