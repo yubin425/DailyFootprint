@@ -61,8 +61,12 @@ class FriendsFragment : Fragment() {
 
 package com.example.dailyfootprint.ui.friends
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.dailyfootprint.R
@@ -75,13 +79,27 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
     private lateinit var binding: FragmentFriendsBinding
     private var data = arrayListOf<User>()
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentFriendsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.plusButton.setOnClickListener {
+            Log.v("test", "check")
+            val intent = Intent(activity, AddFriendActivity::class.java)
+            startActivity(intent)
+        }
+
         data.add(User(userCode = "UserCode", userName = "Andrew", successData = arrayListOf("Success", "Data"), friendList = arrayListOf("Tom", "Tompson")))
 
-        val fragmentFriendsBinding = FragmentFriendsBinding.bind(view)
-        binding = fragmentFriendsBinding
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 20) // Adjust the spanCount as needed
         binding.recyclerView.adapter = UserGrassAdapter(data)
+
+
     }
 }
