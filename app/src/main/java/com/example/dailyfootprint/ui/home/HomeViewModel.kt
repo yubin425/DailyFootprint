@@ -11,6 +11,7 @@ class HomeViewModel : ViewModel() {
     init {
         // 데이터 초기화 또는 가져오기 로직
     }
+
     fun updateLiveData(newValue: String) {
         _someLiveData.value = newValue
     }

@@ -2,6 +2,7 @@ package com.example.dailyfootprint.ui.home
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,11 +11,13 @@ import android.graphics.drawable.Drawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Adapter
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
@@ -23,8 +26,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.FragmentHomeBinding
@@ -32,18 +37,38 @@ import com.example.dailyfootprint.databinding.HomeMainBinding
 import com.example.dailyfootprint.databinding.HomeRecyclerViewItemBinding
 import com.example.dailyfootprint.model.Challenge
 import com.example.dailyfootprint.model.User
+import com.example.dailyfootprint.ui.friendAlert.FriendAlertActivity
+import com.example.dailyfootprint.ui.mypage.MyPageActivity
+import com.google.android.gms.common.util.DataUtils
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.getValue
+import java.util.Calendar
+import java.util.UUID
+import kotlin.math.log
 
 
-val dataList = listOf("항목 1", "항목 2", "항목 3","항목 4","항목 5","항목 6","항목 7","항목 8","항목 9")
 val exampleChallenge = Challenge(
     challengeCode = "CH001",
-    challengeName = "Marathon Training", // home에서 사용
+    challengeName = "엥", // home에서 사용
     challengeOwner = "Alice",
-    position = arrayOf(37.7749F, -122.4194F), // home에서 사용
+    position = listOf(37.7749F, -122.4194F), // home에서 사용
     goal = 42, // 마라톤의 길이 (킬로미터)
-    successTime = arrayOf(0, 0, 0, 1, 1, 1, 1) // 주중에만 도전 (예: 수요일부터 일요일까지)
+    successTime = listOf(0, 0, 0, 1, 1, 1, 1) // 주중에만 도전 (예: 수요일부터 일요일까지)
 )
-val datachalllist = listOf(exampleChallenge, exampleChallenge, exampleChallenge, exampleChallenge, exampleChallenge, exampleChallenge, exampleChallenge)
+
+object DateUtils {
+    fun getAdjustedDayOfWeek(): Int {
+        val calendar = Calendar.getInstance()
+        val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        return if (dayOfWeek == Calendar.SUNDAY) 6 else dayOfWeek - 2
+    }
+}
+
+var datachalllist = listOf(exampleChallenge)
 // challenge형식으로 받아와서 넣기
 // 위치사용
 // 성공과 반응
@@ -57,21 +82,58 @@ val datachalllist = listOf(exampleChallenge, exampleChallenge, exampleChallenge,
 
 // 임시데이터
 
-class MyAdapter(private val dataList: List<Challenge>) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
+//
+//addChallengeToFirebase()
+fun addChallengeToFirebase() {
+    // Create an instance of the Firebase Realtime Database
+    val database = FirebaseDatabase.getInstance()
+    val challengesRef = database.getReference("challenges")
+
+    // Create a Challenge object
+    val exampleChallenge = Challenge(
+        challengeCode = UUID.randomUUID().toString(),
+        challengeName = "Marathon Training",
+        challengeOwner = "Alice",
+        position = listOf(37.7749F, -122.4194F),
+        goal = 42,
+        successTime = listOf(0, 0, 0, 1, 1, 1, 1)
+    )
+
+    // Push the challenge to Firebase
+    // Using the challengeCode as a key ensures that each challenge is unique
+    Log.d("Firebase add challenge", "in")
+    challengesRef.child(exampleChallenge.challengeCode).setValue(exampleChallenge)
+        .addOnSuccessListener {
+            // Handle success
+            println("Challenge added successfully")
+        }
+        .addOnFailureListener {
+            // Handle failure
+            println("Error adding challenge: ${it.message}")
+        }
+}
+
+
+class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = HomeRecyclerViewItemBinding.inflate(inflater, parent, false)
-
-
         return ViewHolder(binding)
     }
+    class DiffCallback : DiffUtil.ItemCallback<Challenge>() {
+        override fun areItemsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
+            return oldItem.challengeCode == newItem.challengeCode // 고유 식별자 비교
+        }
 
+        override fun areContentsTheSame(oldItem: Challenge, newItem: Challenge): Boolean {
+            return oldItem == newItem // 내용 비교
+        }
+    }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = datachalllist[position]
+        val item = getItem(position) // `getItem` 메서드를 사용하여 현재 위치의 항목을 가져옵니다.
         holder.bind(item)
     }
 
-    override fun getItemCount() = datachalllist.size
 
     class ViewHolder(private val binding: HomeRecyclerViewItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -79,12 +141,23 @@ class MyAdapter(private val dataList: List<Challenge>) : RecyclerView.Adapter<My
             binding.textTitle.text = item.challengeName
 
             val myButton: Button = binding.certifiyButton
-            var button_value = true
+            var button_value = false
+
+            // 현재 날짜 및 시간을 가져옵니다.
+
+            if(1==item.successTime[DateUtils.getAdjustedDayOfWeek()]){
+                myButton.background= ContextCompat.getDrawable(myButton.context, R.drawable.round_gray_button)
+                myButton.isEnabled = button_value
+                button_value = true
+            }
+
+            if(!button_value){
             myButton.setOnClickListener {
                 // 여기에 버튼 클릭시 수행할 작업을 넣습니다.
 
-                button_value = false
-                if(!button_value){
+                 // true 면 버튼확인을 안함
+                 // isEnabled는 false -> 비활성화
+
 
                     val locationChecker = LocationChecker(myButton.context)
 
@@ -92,13 +165,27 @@ class MyAdapter(private val dataList: List<Challenge>) : RecyclerView.Adapter<My
 //                    val (latitude, longitude) = Pair(37.4219983, -122.084) // 현재위치 뉴욕
                     val latitudeDouble = latitude.toDouble()
                     val longitudeDouble = longitude.toDouble()
-                    val isNearby = locationChecker.isWithin20mOfTarget(latitudeDouble, longitudeDouble)
+                    var isNearby = locationChecker.isWithin20mOfTarget(latitudeDouble, longitudeDouble)
+
+                    //test
+                    isNearby = true
 
                     if (isNearby) {
                         myButton.isEnabled = button_value
                         // 20미터 이내인 경우의 로직
                         Toast.makeText( myButton.context, binding.textTitle.text.toString()+" "+myButton.text.toString() + " 버튼이 클릭:true", Toast.LENGTH_SHORT).show()
-                        myButton.background= ContextCompat.getDrawable(myButton.context, R.drawable.round_gray_button)
+//                        myButton.background= ContextCompat.getDrawable(myButton.context, R.drawable.round_gray_button)
+
+
+                        val database = FirebaseDatabase.getInstance()
+                        val challengesRef: DatabaseReference = database.getReference("challenges")
+                        val parentRef= challengesRef.child(item.challengeCode)
+                        Log.d("firebase server",parentRef.toString())
+                        parentRef?.child("successTime")?.child(DateUtils.getAdjustedDayOfWeek().toString())?.setValue(1)
+
+
+                        //인증후 서버에 업데이트 -> 반영되면 그걸로 다시 판단하게 되있음
+                        button_value = true
                     } else {
                         // 20미터 밖인 경우의 로직
                         Toast.makeText( myButton.context,latitude.toString() + ", " + longitude, Toast.LENGTH_SHORT).show()
@@ -111,16 +198,19 @@ class MyAdapter(private val dataList: List<Challenge>) : RecyclerView.Adapter<My
     }
 }
 class HomeFragment : Fragment() {
-
+    private lateinit var valueEventListener: ValueEventListener
+    val database = FirebaseDatabase.getInstance()
+    private var challengesRef: DatabaseReference = database.getReference("challenges")
 //    private var _binding: FragmentHomeBinding? = null
     private var _binding: FragmentHomeBinding? = null
+
+    private var currentDayOfWeek: Int = 0
     private val binding get() = _binding!!
-
     private var cheertext : (String) = "기본값 : 에러가 났어요!"
-
     private val homeViewModel: HomeViewModel by lazy {
         ViewModelProvider(this).get(HomeViewModel::class.java)
     }
+
     // This property is only valid between onCreateView and
     // onDestroyView.
 
@@ -129,60 +219,109 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+//        addChallengeToFirebase()
         // 네비게이션 바 숨기기
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        val profileimage : ImageView = binding.imageView6
+        profileimage.setOnClickListener {
+            // 클릭 이벤트 발생 시 새로운 액티비티로 이동
+            val intent = Intent(context, FriendAlertActivity::class.java)
+            startActivity(intent)
+        }
+        val buttonbell : ImageView = binding.imageView3
+        buttonbell.setOnClickListener {
+            // 클릭 이벤트 발생 시 새로운 액티비티로 이동
+            val intent = Intent(context, MyPageActivity::class.java)
+            startActivity(intent)
+        }
 
-        // cheerview
-        val include_home_cheer = binding.includeHomeCheer
-        val textView = include_home_cheer.backgroundbutton
-        cheerupdate()
-        textView.text = cheertext
+
 
 
         // recyclerview
         val recyclerView: RecyclerView = binding.recyclerHome
         recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
         recyclerView.addItemDecoration(CustomDividerDecoration(recyclerView.context))
-//        val dividerItemDecoration = DividerItemDecoration(recyclerView.context, LinearLayoutManager.VERTICAL)
 
-//        recyclerView.addItemDecoration(dividerItemDecoration)
-        recyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-//            adapter = MyAdapter(dataList)
-            adapter = MyAdapter(datachalllist)
-//            isNestedScrollingEnabled = false
-        }
+        // 어댑터 초기화
+        val adapter = MyAdapter()
+        adapter.submitList(datachalllist)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager=LinearLayoutManager(context)
+
+        // Firebase에서 데이터 로드
+        challengesRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val newlist = dataSnapshot.children.mapNotNull { it.getValue(Challenge::class.java) }// 어댑터에 데이터 업데이트
+                datachalllist = newlist
+                adapter.submitList( newlist) // 또는 새 데이터로 adapter를 업데이트
+//                Log.d("FirebaseData", "Loaded data: ${ newlist.size} items")
+                adapter.notifyDataSetChanged() // 어댑터에 데이터 변경 알림
 
 
-//        recyclerView.layoutManager = NoScrollLinearLayoutManager(activity)
+                // cheerview
+                val include_home_cheer = binding.includeHomeCheer
+                val textView = include_home_cheer.backgroundbutton
+
+                cheerupdate()
+                textView.text = cheertext
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("Error fetching data: ${databaseError.message}")
+            }
+        })
+
+
+
         return root
+
     }
 
-    private fun cheerupdate(score: Double = 30.2){
-        // hard coding - + cheer data 연결
+    override fun onResume() {
+        super.onResume()
+    }
 
-        val intscore = score.toInt()
+    private fun cheerupdate(){
+        // hard coding - + cheer data 연결
+        val include_home_cheer = binding.includeHomeCheer
+        val textView = include_home_cheer.backgroundbutton
+
+        val dayOfWeek = DateUtils.getAdjustedDayOfWeek() // 오늘 요일의 숫자 (0부터 6까지)
+
+        val countMatching = datachalllist.count { item ->
+            item.successTime.getOrElse(dayOfWeek) { 0 } == 1
+        }
+
+        val totalItemCount = datachalllist.size
+        Log.d("string check",countMatching.toString() +" "+ totalItemCount.toString())
+
+        val intscore = (countMatching.toDouble()/totalItemCount *100).toInt()
         when {
             intscore in 70..100 -> cheertext = "잘했어요"
             intscore in 50 until 70 -> cheertext = "반이나 했어요"
             intscore in 30 until 50 -> cheertext = "반까지 얼마 안남았어요"
-            intscore > 0 && intscore < 30 -> cheertext = "시작이 반이래요!"
+            intscore > 0 && intscore < 30 -> cheertext = "시작이 반!!!!"
             intscore == 0 -> cheertext = "같이 시작해볼까요?"
             else -> cheertext = "계산 에러가 났어요"
             // 추가적으로 0이나 음수 등의 경우를 처리할 수도 있습니다.
         }
+        cheertext = "$countMatching / $totalItemCount \n $cheertext "
 
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+//        challengesRef.removeEventListener(valueEventListener)
         _binding = null
     }
 }
+
 
 
 class CustomDividerDecoration(context: Context) : RecyclerView.ItemDecoration() {
