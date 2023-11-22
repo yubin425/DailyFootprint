@@ -78,12 +78,14 @@ class UserGrassAdapter(private val userList: List<User>) : RecyclerView.Adapter<
             params.rowSpec = GridLayout.spec(6-(i%7)) // 셀의 row 위치값 계산
             params.columnSpec = GridLayout.spec(i/7) // 셀의 column 위치값 계산
             // 셀 간 간격 설정 - 가로 화면 비율에 맞게 조정
-            params.topMargin = 4
-            params.bottomMargin = 4
-            params.leftMargin = 4
-            params.rightMargin = 4
-            params.width = (screenWidth-24-params.topMargin*40-120)/20
-            params.height = (screenWidth-24-params.topMargin*40-120)/20
+            params.topMargin = screenWidth/270
+            params.bottomMargin = screenWidth/270
+            params.leftMargin = screenWidth/270
+            params.rightMargin = screenWidth/270
+            //params.width = (screenWidth-24-params.topMargin*40-120)/20
+            //params.height = (screenWidth-24-params.topMargin*40-120)/20
+            params.width = screenWidth/28
+            params.height = screenWidth/28
 
             grassView.layoutParams = params
 
