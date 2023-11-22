@@ -10,7 +10,6 @@ import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.ItemUsergrassBinding
 import com.example.dailyfootprint.model.User
 import org.joda.time.LocalDate
-import org.joda.time.format.DateTimeFormat
 
 class UserGrassAdapter(private val userList: List<User>) : RecyclerView.Adapter<UserGrassAdapter.ViewHolder>() {
 
@@ -36,13 +35,8 @@ class UserGrassAdapter(private val userList: List<User>) : RecyclerView.Adapter<
         // Clear existing views in GridLayout
         holder.binding.gridLayoutGrass.removeAllViews()
 
-        //AndroidThreeTen.init(parent.context.applicationContext)
-
-        val dateString = "2023-11-10"
-        val dateStringList = listOf<String>("2023-11-10","2023-11-09","2023-11-08","2023-11-06")
-        val formatter = DateTimeFormat.forPattern("yyyy-MM-dd")
-        val date = LocalDate.parse(dateString, formatter)
-        var previousDate = LocalDate.now()
+        // 140개의 날짜 데이터를 그려야 하므로 139일 전부터 오늘까지의 날짜 별 인증 여부 확인
+        var previousDate = LocalDate.now().minusDays(139)
         var consecutive = 0
 
         for (i in 0 until 140) {
@@ -51,7 +45,7 @@ class UserGrassAdapter(private val userList: List<User>) : RecyclerView.Adapter<
             val preDateToString = previousDate.toString()
             var isAchieved = false
 
-            for (i in dateStringList) {
+            for (i in user.successData) {
                 if (preDateToString == i && consecutive == 2) {
                     grassView.setBackgroundResource(R.drawable.square_darkgreen_cell)
                     isAchieved = true
@@ -68,6 +62,7 @@ class UserGrassAdapter(private val userList: List<User>) : RecyclerView.Adapter<
                     break
                 }
             }
+            // 해당 날짜에 인증
             if (!isAchieved) {
                 grassView.setBackgroundResource(R.drawable.square_gray_cell)
                 consecutive = 0
@@ -79,23 +74,23 @@ class UserGrassAdapter(private val userList: List<User>) : RecyclerView.Adapter<
             val params = GridLayout.LayoutParams()
             val screenWidth = holder.itemView.context.resources.displayMetrics.widthPixels
             // 각 셀의 크기 설정 - 가로 화면 비율에 맞게 조정
-            params.width = screenWidth / 32
-            params.height = screenWidth / 32
             // 각 셀의 위치 설정
-            params.rowSpec = GridLayout.spec(i % 7) // Calculate the row position
-            params.columnSpec = GridLayout.spec(i / 7) // Calculate the column position
-            // 셀 간 간격 설정 - 가로 와면 비율에 맞게 조정
-            params.topMargin = screenWidth / 200
-            params.bottomMargin = screenWidth / 200
-            params.leftMargin = screenWidth / 200
-            params.rightMargin = screenWidth / 200
+            params.rowSpec = GridLayout.spec(6-(i%7)) // 셀의 row 위치값 계산
+            params.columnSpec = GridLayout.spec(i/7) // 셀의 column 위치값 계산
+            // 셀 간 간격 설정 - 가로 화면 비율에 맞게 조정
+            params.topMargin = 4
+            params.bottomMargin = 4
+            params.leftMargin = 4
+            params.rightMargin = 4
+            params.width = (screenWidth-24-params.topMargin*40-120)/20
+            params.height = (screenWidth-24-params.topMargin*40-120)/20
 
             grassView.layoutParams = params
 
             // GridLayout에 잔디 추가
             holder.binding.gridLayoutGrass.addView(grassView)
 
-            previousDate = previousDate.minusDays(1)
+            previousDate = previousDate.plusDays(1)
         }
     }
 
