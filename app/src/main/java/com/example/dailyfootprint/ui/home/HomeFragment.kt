@@ -1,5 +1,6 @@
 package com.example.dailyfootprint.ui.home
 
+import FirebaseManager
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -53,7 +54,7 @@ import kotlin.math.log
 
 val exampleChallenge = Challenge(
     challengeCode = "CH001",
-    challengeName = "엥", // home에서 사용
+    challengeName = "테스트", // home에서 사용
     challengeOwner = "Alice",
     position = listOf(37.7749F, -122.4194F), // home에서 사용
     goal = 42, // 마라톤의 길이 (킬로미터)
@@ -92,8 +93,8 @@ fun addChallengeToFirebase() {
     // Create a Challenge object
     val exampleChallenge = Challenge(
         challengeCode = UUID.randomUUID().toString(),
-        challengeName = "Marathon Training",
-        challengeOwner = "Alice",
+        challengeName = "얘는 제목",
+        challengeOwner = FirebaseManager.getUID(),
         position = listOf(37.7749F, -122.4194F),
         goal = 42,
         successTime = listOf(0, 0, 0, 1, 1, 1, 1)
@@ -254,43 +255,40 @@ class HomeFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager=LinearLayoutManager(context)
 
+        val include_home_cheer = binding.includeHomeCheer
+        val textView = include_home_cheer.backgroundbutton
         // Firebase에서 데이터 로드
-        challengesRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val newlist = dataSnapshot.children.mapNotNull { it.getValue(Challenge::class.java) }// 어댑터에 데이터 업데이트
-                datachalllist = newlist
-                adapter.submitList( newlist) // 또는 새 데이터로 adapter를 업데이트
-//                Log.d("FirebaseData", "Loaded data: ${ newlist.size} items")
-                adapter.notifyDataSetChanged() // 어댑터에 데이터 변경 알림
+        val currentUserUID = FirebaseManager.getUID() // 현재 사용자의 UID
 
+        challengesRef.orderByChild("challengeOwner").equalTo(currentUserUID)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val newlist = dataSnapshot.children.mapNotNull {
+                        it.getValue(Challenge::class.java)
+                    }
 
-                // cheerview
-                val include_home_cheer = binding.includeHomeCheer
-                val textView = include_home_cheer.backgroundbutton
+                    // 어댑터에 데이터 업데이트
+                    datachalllist = newlist
+                    adapter.submitList(newlist)
+//            Log.d("FirebaseData", "Loaded data: ${newlist.size} items")
+                    adapter.notifyDataSetChanged()
 
-                cheerupdate()
-                textView.text = cheertext
-            }
+                    // cheerview
+                    cheerupdate()
+                    textView.text = cheertext
+                }
 
-            override fun onCancelled(databaseError: DatabaseError) {
-                println("Error fetching data: ${databaseError.message}")
-            }
-        })
-
-
-
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // 쿼리 실패 처리
+                    Log.w("FirebaseData", "loadPost:onCancelled", databaseError.toException())
+                }
+            })
         return root
 
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
 
     private fun cheerupdate(){
-        // hard coding - + cheer data 연결
-        val include_home_cheer = binding.includeHomeCheer
-        val textView = include_home_cheer.backgroundbutton
 
         val dayOfWeek = DateUtils.getAdjustedDayOfWeek() // 오늘 요일의 숫자 (0부터 6까지)
 
