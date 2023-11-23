@@ -73,7 +73,6 @@ class UserGrassAdapter(private val userList: List<User>) : RecyclerView.Adapter<
             // GridLayout을 위한 parameter 설정
             val params = GridLayout.LayoutParams()
             val screenWidth = holder.itemView.context.resources.displayMetrics.widthPixels
-            // 각 셀의 크기 설정 - 가로 화면 비율에 맞게 조정
             // 각 셀의 위치 설정
             params.rowSpec = GridLayout.spec(6-(i%7)) // 셀의 row 위치값 계산
             params.columnSpec = GridLayout.spec(i/7) // 셀의 column 위치값 계산
