@@ -1,5 +1,7 @@
 package com.example.dailyfootprint.ui
 
+import FirebaseManager.databaseReference
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,10 +10,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.ItemUsergrassBinding
-import com.example.dailyfootprint.model.User
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import org.joda.time.LocalDate
 
-class UserGrassAdapter(private val userList: List<User>) : RecyclerView.Adapter<UserGrassAdapter.ViewHolder>() {
+class UserGrassAdapter(private val friendCodeList: List<String>) : RecyclerView.Adapter<UserGrassAdapter.ViewHolder>() {
 
 
     class ViewHolder(val binding: ItemUsergrassBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -28,9 +32,33 @@ class UserGrassAdapter(private val userList: List<User>) : RecyclerView.Adapter<
 
     // View에 내용이 씌워질 때 호출
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val user = userList[position]
+        val userCode = friendCodeList[position]
+        var successData = arrayListOf<String>()
+        val userRef = databaseReference.child("user/$userCode")
 
-        holder.binding.textViewUsername.text = user.userName
+        userRef.child("userName").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val userName = snapshot.getValue(String::class.java)
+                holder.binding.textViewUsername.text = userName
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Fail: ", "fail to get userName")
+            }
+        })
+
+        userRef.child("successData").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (successDataSnaphot in snapshot.children) {
+                    val date = successDataSnaphot.getValue(String::class.java)
+                    date?.let {
+                        successData.add(it)
+                    }
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Fail: ", "fail to get successData")
+            }
+        })
 
         // Clear existing views in GridLayout
         holder.binding.gridLayoutGrass.removeAllViews()
@@ -45,7 +73,7 @@ class UserGrassAdapter(private val userList: List<User>) : RecyclerView.Adapter<
             val preDateToString = previousDate.toString()
             var isAchieved = false
 
-            for (i in user.successData) {
+            for (i in successData) {
                 if (preDateToString == i && consecutive == 2) {
                     grassView.setBackgroundResource(R.drawable.square_darkgreen_cell)
                     isAchieved = true
@@ -96,6 +124,6 @@ class UserGrassAdapter(private val userList: List<User>) : RecyclerView.Adapter<
     }
 
     override fun getItemCount(): Int {
-        return userList.size
+        return friendCodeList.size
     }
 }

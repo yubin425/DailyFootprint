@@ -97,9 +97,9 @@ class AddFriendActivity : AppCompatActivity() {
     }
 
     private fun getName(userCode: String, callback: (String?) -> Unit, onError: (DatabaseError) -> Unit) {
-        val userRef = databaseReference.child("user/$userCode/userName")
+        val userNameRef = databaseReference.child("user/$userCode/userName")
 
-        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        userNameRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val userName = snapshot.getValue(String::class.java)
                 callback(userName.toString())
@@ -113,7 +113,7 @@ class AddFriendActivity : AppCompatActivity() {
     }
 
     private fun searchPerson(searchName: String, callback: (Boolean) -> Unit, onError: (DatabaseError) -> Unit) {
-        val userRef = FirebaseManager.userDatabaseReference // 변경해야 할 경로
+        val userRef = FirebaseManager.userDatabaseReference
 
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -137,7 +137,7 @@ class AddFriendActivity : AppCompatActivity() {
     }
 
     private fun getUserCode(userCode: String, callback: (String?) -> Unit, onError: (DatabaseError) -> Unit) {
-        val userRef = FirebaseManager.userDatabaseReference // 변경해야 할 경로
+        val userRef = FirebaseManager.userDatabaseReference
 
         userRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -179,6 +179,7 @@ class AddFriendActivity : AppCompatActivity() {
                             }
                             // 친구 수락 대기 중인 경우
                             else {
+                                alreadySent = true
                                 callback(3)
                             }
                         }

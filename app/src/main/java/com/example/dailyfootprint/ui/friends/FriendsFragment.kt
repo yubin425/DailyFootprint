@@ -61,22 +61,27 @@ class FriendsFragment : Fragment() {
 
 package com.example.dailyfootprint.ui.friends
 
+import FirebaseManager
+import FirebaseManager.databaseReference
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.FragmentFriendsBinding
-import com.example.dailyfootprint.model.User
 import com.example.dailyfootprint.ui.GrassDecoration
 import com.example.dailyfootprint.ui.UserGrassAdapter
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 
 class FriendsFragment : Fragment(R.layout.fragment_friends) {
 
     private lateinit var binding: FragmentFriendsBinding
-    private var data = arrayListOf<User>()
+    private var friendCodeList = arrayListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,21 +99,42 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
         }
 
         // 임의의 더미 데이터 생성
-        val dateStringList1: ArrayList<String> = arrayListOf("2023-11-10","2023-11-09","2023-11-08","2023-11-06")
+        /*val dateStringList1: ArrayList<String> = arrayListOf("2023-11-10","2023-11-09","2023-11-08","2023-11-06")
         val dateStringList2: ArrayList<String> = arrayListOf("2023-11-14","2023-11-03","2023-11-02","2023-10-31")
         val dateStringList3: ArrayList<String> = arrayListOf("2023-11-22","2023-11-21","2023-11-20","2023-10-19")
         var dummyUser = User("UserCode", "Kim", dateStringList1, arrayListOf<String>("James", "Mathew"))
         var friend1 = User("UserCode1", "James", dateStringList2, arrayListOf<String>("Kim"))
         var friend2 = User("UserCode", "Mathew", dateStringList3, arrayListOf<String>("Kim"))
-
         data.add(friend1)
-        data.add(friend2)
+        data.add(friend2)*/
+
+        addFriendsInfo(FirebaseManager.getUID())
 
         // 리사이클러뷰 아이템 간 간격 설정
         binding.recyclerView.addItemDecoration(GrassDecoration(80))
 
-        binding.recyclerView.adapter = UserGrassAdapter(data)
+        binding.recyclerView.adapter = UserGrassAdapter(friendCodeList)
 
 
+    }
+
+    private fun addFriendsInfo(userCode: String) {
+        val friendListRef = databaseReference.child("user/$userCode/friendList")
+        Log.w("ref:" , friendListRef.toString())
+
+        friendListRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (friendSnapshot in snapshot.children) {
+                    val friend = friendSnapshot.getValue(String::class.java)
+                    friend?.let {
+                        friendCodeList.add(it)
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("fail: ", "fail to load friends")
+            }
+        })
     }
 }
