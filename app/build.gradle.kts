@@ -2,11 +2,14 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+
+    //Room 라이브러리 추가
+    id ("kotlin-kapt")  //Room 라이브러리 추가
 }
 
 android {
     namespace = "com.example.dailyfootprint"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.dailyfootprint"
@@ -56,4 +59,7 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
     implementation("com.google.firebase:firebase-analytics-ktx")
+
+
+    implementation ("androidx.cardview:cardview:1.0.0")
 }

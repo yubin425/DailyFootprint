@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.dashboard.ChallengeActivity" >
+
+
+    <LinearLayout
+        android:id="@+id/dial"
+        android:layout_width="328dp"
+        android:layout_height="160dp"
+        android:background="@drawable/dashboard_challengeview_background"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="328dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="50dp">
+
+                <TextView
+                    android:id="@+id/delMsg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    tools:text="삭제하시겠습니까?  " />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="8dp" >
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp">
+
+                    <Button
+                        android:id="@+id/delete_grbtn"
+                        android:layout_width="60dp"
+                        android:layout_height="23dp"
+                        android:layout_margin="0dp"
+                        android:background="@drawable/dashboard_challenge_grbtn"
+                        android:scrollbarSize="0dp"
+                        android:includeFontPadding="false"
+                        android:text="네"
+                        android:textColor="#FFFFFF"
+                        android:textSize="8sp" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp">
+
+                    <Button
+                        android:id="@+id/delete_redbtn"
+                        android:layout_width="60dp"
+                        android:layout_height="23dp"
+                        android:layout_margin="0dp"
+                        android:background="@drawable/dashboard_challenge_redbtn"
+                        android:scrollbarSize="0dp"
+                        android:includeFontPadding="false"
+                        android:text="아니오"
+                        android:textColor="#FFFFFF"
+                        android:textSize="8sp"/>
+
+                 </FrameLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

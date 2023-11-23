@@ -11,7 +11,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DailyFootprint"
-        tools:targetApi="31">
+        tools:targetApi="31"
+
+        android:requestLegacyExternalStorage="true" >
+
+        <activity
+            android:name=".ui.dashboard.ChallengeActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.dashboard.DashboardFragment"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
