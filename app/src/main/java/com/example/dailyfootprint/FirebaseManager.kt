@@ -1,10 +1,7 @@
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 
 object FirebaseManager {
     val firebaseDatabase: FirebaseDatabase by lazy {
@@ -34,20 +31,4 @@ object FirebaseManager {
 
     val userDatabaseReference : DatabaseReference
         get() = userReference
-
-    fun getName(userCode: String, callback: (String?) -> Unit, onError: (DatabaseError) -> Unit) {
-        val userRef = databaseReference.child("user/$userCode/userName")
-
-        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val userName = snapshot.getValue(String::class.java)
-                callback(userName.toString())
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                // 오류 처리
-                onError(databaseError)
-            }
-        })
-    }
 }
