@@ -2,6 +2,7 @@ package com.example.dailyfootprint.ui.challenge
 
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
@@ -34,6 +35,9 @@ class ChallengeActivity : AppCompatActivity() {
         binding.challengeviewLocationEdittext.addTextChangedListener {
             updateAddButtonState()
         }
+        binding.challengeviewSearchButton.setOnClickListener {
+            //
+        }
         binding.challengeviewAddButton.setOnClickListener {
             saveValues()
         }
@@ -49,7 +53,6 @@ class ChallengeActivity : AppCompatActivity() {
         val isAddButtonEnabled = challengeName.isNotEmpty() && isSearchButtonEnabled
         binding.challengeviewAddButton.isEnabled = isAddButtonEnabled
     }
-
 
     private fun saveValues() {
         val challengeName = binding.challengeviewNameEdittext.text.toString()

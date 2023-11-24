@@ -12,6 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DailyFootprint"
         tools:targetApi="31">
+
+        <activity
+            android:name=".ui.challenge.ChallengeActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
