@@ -12,15 +12,12 @@
         tools:layout_editor_absoluteY="10dp">
 
 
-        <Button
-            android:id="@+id/backgroundbutton"
+        <TextView
+            android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="108sp"
             android:background="@drawable/round_white_button"
-            android:text=""
-            android:textAlignment="center"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:text="" />
 
     </FrameLayout>
 

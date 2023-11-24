@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.drawable.Drawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
@@ -16,40 +15,32 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.FragmentHomeBinding
-import com.example.dailyfootprint.databinding.HomeMainBinding
 import com.example.dailyfootprint.databinding.HomeRecyclerViewItemBinding
 import com.example.dailyfootprint.model.Challenge
-import com.example.dailyfootprint.model.User
 import com.example.dailyfootprint.ui.friendAlert.FriendAlertActivity
 import com.example.dailyfootprint.ui.mypage.MyPageActivity
-import com.google.android.gms.common.util.DataUtils
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 import java.util.UUID
-import kotlin.math.log
 
 
 val exampleChallenge = Challenge(
@@ -185,6 +176,15 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
                         parentRef?.child("successTime")?.child(DateUtils.getAdjustedDayOfWeek().toString())?.setValue(1)
 
 
+                        val calendar = Calendar.getInstance()
+                        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        val today: String = dateFormat.format(calendar.time)
+
+                        val userRef: DatabaseReference = database.getReference("user")
+                        userRef?.child(FirebaseManager.getUID())?.child("successData")?.child(today)?.setValue(1)
+
+
+
                         //인증후 서버에 업데이트 -> 반영되면 그걸로 다시 판단하게 되있음
                         button_value = true
                     } else {
@@ -228,13 +228,13 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val profileimage : ImageView = binding.imageView6
+        val profileimage : ImageView = binding.imageprofile
         profileimage.setOnClickListener {
             // 클릭 이벤트 발생 시 새로운 액티비티로 이동
             val intent = Intent(context, FriendAlertActivity::class.java)
             startActivity(intent)
         }
-        val buttonbell : ImageView = binding.imageView3
+        val buttonbell : ImageView = binding.imagebell
         buttonbell.setOnClickListener {
             // 클릭 이벤트 발생 시 새로운 액티비티로 이동
             val intent = Intent(context, MyPageActivity::class.java)
@@ -301,15 +301,16 @@ class HomeFragment : Fragment() {
 
         val intscore = (countMatching.toDouble()/totalItemCount *100).toInt()
         when {
-            intscore in 70..100 -> cheertext = "잘했어요"
-            intscore in 50 until 70 -> cheertext = "반이나 했어요"
-            intscore in 30 until 50 -> cheertext = "반까지 얼마 안남았어요"
-            intscore > 0 && intscore < 30 -> cheertext = "시작이 반!!!!"
-            intscore == 0 -> cheertext = "같이 시작해볼까요?"
+            intscore > 99 -> cheertext = "\uD83D\uDE0D 이번주의 챌린지를 전부 달성했어요!"
+            intscore in 80..99 -> cheertext = "\uD83D\uDE31 거의 다 왔어요. 조금만 힘내요!"
+            intscore in 50 until 80 -> cheertext = "\uD83E\uDD79 반이나 했어요. 정말 대단해요!"
+//            intscore in 30 until 50 -> cheertext = "반까지 얼마 안남았어요"
+            intscore > 0 && intscore < 50 -> cheertext = "\uD83E\uDD73  시작이 반이래요!"
+            intscore == 0 -> cheertext = "\uD83D\uDC4D 챌린지 달성에 도전해봐요!"
             else -> cheertext = "계산 에러가 났어요"
             // 추가적으로 0이나 음수 등의 경우를 처리할 수도 있습니다.
         }
-        cheertext = "$countMatching / $totalItemCount \n $cheertext "
+//        cheertext = "$countMatching / $totalItemCount \n $cheertext "
 
     }
 
