@@ -208,9 +208,6 @@ class HomeFragment : Fragment() {
     private var currentDayOfWeek: Int = 0
     private val binding get() = _binding!!
     private var cheertext : (String) = "기본값 : 에러가 났어요!"
-    private val homeViewModel: HomeViewModel by lazy {
-        ViewModelProvider(this).get(HomeViewModel::class.java)
-    }
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -231,13 +228,13 @@ class HomeFragment : Fragment() {
         val profileimage : ImageView = binding.imageprofile
         profileimage.setOnClickListener {
             // 클릭 이벤트 발생 시 새로운 액티비티로 이동
-            val intent = Intent(context, FriendAlertActivity::class.java)
+            val intent = Intent(context, MyPageActivity::class.java)
             startActivity(intent)
         }
         val buttonbell : ImageView = binding.imagebell
         buttonbell.setOnClickListener {
             // 클릭 이벤트 발생 시 새로운 액티비티로 이동
-            val intent = Intent(context, MyPageActivity::class.java)
+            val intent = Intent(context, FriendAlertActivity::class.java)
             startActivity(intent)
         }
 
