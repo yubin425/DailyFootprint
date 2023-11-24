@@ -15,7 +15,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import org.joda.time.LocalDate
 
-class UserGrassAdapter(private val friendCodeList: List<String>) : RecyclerView.Adapter<UserGrassAdapter.ViewHolder>() {
+class UserGrassAdapter(private val userCodeList: List<String>) : RecyclerView.Adapter<UserGrassAdapter.ViewHolder>() {
 
 
     class ViewHolder(val binding: ItemUsergrassBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -32,7 +32,7 @@ class UserGrassAdapter(private val friendCodeList: List<String>) : RecyclerView.
 
     // View에 내용이 씌워질 때 호출
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val userCode = friendCodeList[position]
+        val userCode = userCodeList[position]
         var successData = arrayListOf<String>()
         val userRef = databaseReference.child("user/$userCode")
 
@@ -124,6 +124,6 @@ class UserGrassAdapter(private val friendCodeList: List<String>) : RecyclerView.
     }
 
     override fun getItemCount(): Int {
-        return friendCodeList.size
+        return userCodeList.size
     }
 }
