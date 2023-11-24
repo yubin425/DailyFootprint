@@ -173,7 +173,7 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
                         val challengesRef: DatabaseReference = database.getReference("challenges")
                         val parentRef= challengesRef.child(item.challengeCode)
                         Log.d("firebase server",parentRef.toString())
-                        parentRef?.child("successTime")?.child(DateUtils.getAdjustedDayOfWeek().toString())?.setValue(1)
+                        parentRef.child("successTime")?.child(DateUtils.getAdjustedDayOfWeek().toString())?.setValue(1)
 
 
                         val calendar = Calendar.getInstance()
@@ -181,7 +181,7 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
                         val today: String = dateFormat.format(calendar.time)
 
                         val userRef: DatabaseReference = database.getReference("user")
-                        userRef?.child(FirebaseManager.getUID())?.child("successData")?.child(today)?.setValue(1)
+                        userRef.child(FirebaseManager.getUID())?.child("successData")?.child(today)?.setValue(1)
 
 
 
