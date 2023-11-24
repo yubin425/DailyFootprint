@@ -1,82 +1,81 @@
 package com.example.dailyfootprint.ui.challenge
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
-import android.widget.Button
-import android.widget.EditText
+import android.widget.ArrayAdapter
 import android.widget.Toast
-import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
-import com.example.dailyfootprint.model.Challenge
-import com.example.dailyfootprint.MainActivity
-import com.example.dailyfootprint.R
+import androidx.core.widget.addTextChangedListener
 import com.example.dailyfootprint.databinding.ActivityChallengeBinding
+import com.example.dailyfootprint.model.Challenge
+import com.example.dailyfootprint.R
+import com.google.firebase.database.*
 
 class ChallengeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityChallengeBinding
-    private var saveValues : ArrayList<String> = ArrayList()
+    private lateinit var databaseReference: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChallengeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.challengeviewNameEdittext.setOnClickListener {
-            checkChallengeName()
+        val spinnerAdapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.periods,
+            android.R.layout.simple_spinner_item
+        )
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.challengeviewSelectSpinner.adapter = spinnerAdapter
+
+        binding.challengeviewNameEdittext.addTextChangedListener {
+            updateAddButtonState()
         }
-        binding.challengeviewSearchButton.setOnClickListener {
-            checkLocation()
-        }
-        binding.challengeviewSelectSpinner.setOnClickListener {
-            checkSpinnerValue()
+        binding.challengeviewLocationEdittext.addTextChangedListener {
+            updateAddButtonState()
         }
         binding.challengeviewAddButton.setOnClickListener {
             saveValues()
-            moveToNextView()
         }
     }
 
-    private fun checkChallengeName() {
+    private fun updateAddButtonState() {
         val challengeName = binding.challengeviewNameEdittext.text.toString()
+        val location = binding.challengeviewLocationEdittext.text.toString()
+        val isSearchButtonEnabled = location.isNotEmpty()
 
-        if (challengeName.isNotEmpty()) {
-            showToast("입력값: $challengeName")
-        } else {
-            showToast("이름을 확인하세요.")
-        }
+        binding.challengeviewSearchButton.isEnabled = isSearchButtonEnabled
+
+        val isAddButtonEnabled = challengeName.isNotEmpty() && isSearchButtonEnabled
+        binding.challengeviewAddButton.isEnabled = isAddButtonEnabled
     }
 
-    private fun checkLocation() {
-        // GPS
-    }
-
-    private fun checkSpinnerValue() {
-        val selectedValue = binding.challengeviewSelectSpinner.selectedItem.toString()
-
-        if (selectedValue.isNotEmpty()) {
-            //
-        } else {
-            showToast("수행 주기를 선택해주세요.")
-        }
-    }
 
     private fun saveValues() {
         val challengeName = binding.challengeviewNameEdittext.text.toString()
         val locationValue = binding.challengeviewLocationEdittext.text.toString()
         val spinnerValue = binding.challengeviewSelectSpinner.selectedItem.toString()
 
-        saveValues.add("ChallengeName: $challengeName")
-        saveValues.add("LocationValue: $locationValue")
-        saveValues.add("SpinnerValue: $spinnerValue")
-    }
+        if (challengeName.isNotEmpty()) {
+            val challengeRef = databaseReference.child("challenge")
+            val newChallengeRef = challengeRef.push()
+            val newChallenge = Challenge(
+                challengeName = challengeName,
+                challengeLocation = locationValue,
+                goal = spinnerValue
+            )
 
-    private fun moveToNextView() {
-        // val intent = Intent(this@ChallengeActivity, NextActivity::class.java)
-        // intent.putStringArrayListExtra("saveValues", saveValues)
-        // startActivity(intent)
+            newChallengeRef.setValue(newChallenge)
+                .addOnSuccessListener {
+                    showToast("챌린지가 추가되었습니다.")
+                    finish()
+                }
+                .addOnFailureListener {
+                    showToast("챌린지 추가에 실패했습니다.")
+                }
+        } else {
+            showToast("챌린지 이름을 입력해주세요.")
+        }
     }
 
     private fun showToast(message: String) {

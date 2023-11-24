@@ -4,17 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
     android:background="#E9F1F3F4"
+    tools:context=".ui.challenge.ChallengeActivity"
     >
 
-    <Button
-        android:id="@+id/challengeview_back_button"
+    <ImageButton
+        android:id="@+id/challengeview_cancel_button"
         android:layout_width="20dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/arrow"
-        app:layout_constraintStart_toStartOf="parent"
+        android:background="@android:color/transparent"
+        android:contentDescription="CancelChallengeButton"
+        android:padding="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/cancel"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
         />
@@ -81,40 +87,47 @@
         tools:ignore="MissingConstraints"
         />
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/searchLocationWindow"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="300dp"
+        android:background="@drawable/round_ivory_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints"
         >
         <EditText
             android:id="@+id/challengeview_location_edittext"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:layout_marginStart="30dp"
-            android:layout_marginEnd="5dp"
             android:background="@drawable/round_white_button"
             android:hint="주소를 입력하세요."
             android:paddingLeft="15dp"
-            tools:ignore="MissingConstraints"
+            android:inputType="text"
+            android:minWidth="48dp"
+            android:minHeight="40dp"
             />
 
         <Button
             android:id="@+id/challengeview_search_button"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/round_green_button"
-            android:enabled="false"
-            android:layout_marginEnd="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40dp"
+            android:layout_centerVertical="true"
             android:text="검색"
             android:textColor="@color/white"
             android:textStyle="bold"
+            android:minWidth="50dp"
+            android:minHeight="40dp"
             />
-    </LinearLayout>
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/challengeview_cycle_text"
@@ -131,17 +144,18 @@
         tools:ignore="MissingConstraints"
         />
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="40dp"
+    <RelativeLayout
+        android:id="@+id/selectedPeriodWindow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="40dp"
         android:layout_marginTop="400dp"
         android:background="@drawable/round_white_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints"
         >
         <Spinner
             android:id="@+id/challengeview_select_spinner"
@@ -154,7 +168,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
-    </LinearLayout>
+    </RelativeLayout>
 
     <Button
         android:id="@+id/challengeview_add_button"
