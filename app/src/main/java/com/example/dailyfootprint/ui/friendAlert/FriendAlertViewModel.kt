@@ -6,13 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.dailyfootprint.model.Friend
-import com.example.dailyfootprint.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import kotlin.random.Random
 
 class FriendAlertViewModel : ViewModel(){
     private var _friendAlertList = MutableLiveData<ArrayList<FriendAlertInfo>>()
@@ -28,7 +25,7 @@ class FriendAlertViewModel : ViewModel(){
         // 서버에서 값 불러오기
         Log.w("getFriendAlertList","함수 들어옴")
         val userId = FirebaseManager.getUID()
-        val friendRequestsRef = FirebaseManager.databaseReference.child("friend")
+        val friendRequestsRef = FirebaseManager.databaseReference.child("friends")
         Log.w("getFriendAlertList : UID",userId)
         friendRequestsRef.orderByChild("receiveFriend").equalTo(userId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -91,7 +88,7 @@ class FriendAlertViewModel : ViewModel(){
 
 
         // 파이어베이스에서 친구 요청 정보 업데이트
-        val databaseReference = FirebaseManager.databaseReference.child("friend")
+        val databaseReference = FirebaseManager.databaseReference.child("friends")
         updateFriendRequest(databaseReference, uid, friendCode)
 
         // 각 사용자의 친구 목록에 상대방 추가
@@ -140,7 +137,7 @@ class FriendAlertViewModel : ViewModel(){
         _friendAlertList.value = currentList
 
         // 파이어베이스에서 삭제
-        val databaseReference = FirebaseManager.databaseReference.child("friend")
+        val databaseReference = FirebaseManager.databaseReference.child("friends")
         databaseReference.orderByChild("requestFriend").equalTo(friendCode)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
