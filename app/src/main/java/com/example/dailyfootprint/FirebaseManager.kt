@@ -1,3 +1,4 @@
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -14,6 +15,10 @@ object FirebaseManager {
     // FirebaseAuth 객체를 싱글톤으로 선언
     val authInstance: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()
+    }
+
+    fun getUID() : String {
+        return authInstance.currentUser!!.uid.toString()
     }
 
     // FirebaseAuth 객체에 접근하는 함수

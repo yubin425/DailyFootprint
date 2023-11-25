@@ -50,8 +50,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.4")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.4")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("com.google.firebase:firebase-database-ktx:20.3.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:24.9.1")
+    implementation ("joda-time:joda-time:2.10.13")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -71,5 +72,5 @@ dependencies {
 
     //구글맵 권한
     implementation ("com.google.android.gms:play-services-maps:18.2.0")
-    implementation ("com.google.android.libraries.places:places:3.3.0")
+    implementation ("com.google.android.libraries.places:places:3.2.0")
 }
