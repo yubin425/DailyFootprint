@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
 import com.example.dailyfootprint.model.Challenge
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -39,7 +40,11 @@ import com.google.firebase.database.database
 class MyAdapter() :
     RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
     private val challengeList = mutableListOf<Challenge>()
+    private lateinit var userId: String
 
+    private fun initializeUserId() {
+        userId = FirebaseManager.getUID()
+    }
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         public var challengeTitle: TextView = itemView.findViewById(R.id.textView)
@@ -59,8 +64,6 @@ class MyAdapter() :
     }
 
     // 2. Replace the contents of a view (invoked by the layout manager)
-    //테스트를 위한 임시 text값
-    //firebase 연결해야해..
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
@@ -124,36 +127,48 @@ class MyAdapter() :
 
 
     private fun fetchChallenges() {
-        val firebaseDatabaseUrl = "https://dailyfootprint-aeac7-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        val firebaseDatabaseUrl =
+            "https://dailyfootprint-aeac7-default-rtdb.asia-southeast1.firebasedatabase.app/"
         val database = Firebase.database(firebaseDatabaseUrl)
         val challRef = database.reference.child("challenges")
+        val challOwner = challRef.child("challengeOwner").toString()
 
         //currentUser 랑 challengeOwner 확인하는거 추가해야함
+        Log.d("MyAdapter", "Challenge Owner: ${challOwner}")
+        Log.d("MyAdapter", "User ID: $userId")
+        //if (userId == challOwner) {
+            challRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    challengeList.clear()
 
-        challRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                challengeList.clear()
+                    for (challengeSnapshot in dataSnapshot.children) {
+                        val challenge = challengeSnapshot.getValue(Challenge::class.java)
+                        challenge?.let {
+                            // challengeOwner 값 가져오기
+                            val challengeOwner = challengeSnapshot.child("challengeOwner").getValue(String::class.java)
 
-                for (challengeSnapshot in dataSnapshot.children) {
-                    val challenge = challengeSnapshot.getValue(Challenge::class.java)
-                    challenge?.let {
-                        challengeList.add(it)
+                            // 현재 사용자와 challengeOwner가 같은 경우만 리스트에 추가
+                            if (userId == challengeOwner) {
+                                challengeList.add(it)
+                            }
+                        }
                     }
+                    //updateDayColors()
+                    notifyDataSetChanged()
                 }
-                //updateDayColors()
-                notifyDataSetChanged()
-            }
 
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.e("Firebase", "데이터 가져오기 실패: ${databaseError.toException()}")
-            }
-        })
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.e("Firebase", "데이터 가져오기 실패: ${databaseError.toException()}")
+                }
+            })
 
-        // updateDayColors 함수 추가
+            // updateDayColors 함수 추가
 
-    }
+        }
+    //}
 
     fun initialize() {
+        initializeUserId()
         fetchChallenges()
     }
 
