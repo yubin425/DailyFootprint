@@ -90,6 +90,13 @@ class ChallengeActivity : AppCompatActivity() {
             data?.let {
                 val place = Autocomplete.getPlaceFromIntent(it)
                 binding.challengeviewLocationEdittext.setText(place.address)
+                /*
+                val mapIntent = Intent(this, MapsActivity::class.java)
+                mapIntent.putExtra("placeName", place.name)
+                mapIntent.putExtra("placeAddress", place.address)
+
+                startActivity(mapIntent)
+                 */
             }
         }
     }
