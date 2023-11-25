@@ -44,8 +44,8 @@
             android:id="@+id/textClock2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:format12Hour="hh:mm:ss"
-            android:format24Hour="hh:mm:ss"
+            android:format12Hour="HH:mm:ss"
+            android:format24Hour="HH:mm:ss"
             android:textSize="38sp"
             android:textStyle="bold" />
 

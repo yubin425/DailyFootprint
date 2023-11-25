@@ -49,7 +49,8 @@ class UserGrassAdapter(private val friendCodeList: List<String>) : RecyclerView.
         userRef.child("successData").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (successDataSnaphot in snapshot.children) {
-                    val date = successDataSnaphot.getValue(String::class.java)
+                    val date = successDataSnaphot.getKey()
+                    Log.w("firebase",date.toString())
                     date?.let {
                         successData.add(it)
                     }

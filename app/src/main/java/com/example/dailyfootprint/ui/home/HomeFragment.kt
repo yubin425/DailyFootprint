@@ -2,6 +2,7 @@ package com.example.dailyfootprint.ui.home
 
 import FirebaseManager
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -19,7 +20,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
@@ -30,6 +33,8 @@ import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.FragmentHomeBinding
 import com.example.dailyfootprint.databinding.HomeRecyclerViewItemBinding
 import com.example.dailyfootprint.model.Challenge
+import com.example.dailyfootprint.ui.GrassDecoration
+import com.example.dailyfootprint.ui.UserGrassAdapter
 import com.example.dailyfootprint.ui.friendAlert.FriendAlertActivity
 import com.example.dailyfootprint.ui.mypage.MyPageActivity
 import com.google.firebase.database.DataSnapshot
@@ -238,6 +243,16 @@ class HomeFragment : Fragment() {
             startActivity(intent)
         }
 
+
+        val recyclerViewgrass: RecyclerView = binding.homeusergrass.recyclergrass
+//        recyclerViewgrass.layoutManager = LinearLayoutManager(recyclerViewgrass.context)
+//        recyclerViewgrass.addItemDecoration(CustomDividerDecoration(recyclerViewgrass.context))
+
+        recyclerViewgrass.addItemDecoration(GrassDecoration(0))
+
+        recyclerViewgrass.layoutManager = LinearLayoutManager(recyclerViewgrass.context)
+        var friendCodeList = arrayListOf<String>(FirebaseManager.getUID())
+        recyclerViewgrass.adapter = UserGrassAdapter(friendCodeList)
 
 
 
