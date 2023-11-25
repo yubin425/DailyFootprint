@@ -54,7 +54,7 @@ val exampleChallenge = Challenge(
     challengeOwner = "Alice",
     position = listOf(37.7749F, -122.4194F), // home에서 사용
     goal = 42, // 마라톤의 길이 (킬로미터)
-    successTime = listOf(0, 0, 0, 1, 1, 1, 1) // 주중에만 도전 (예: 수요일부터 일요일까지)
+    successTime = listOf(0, 0, 0, 0, 0, 0, 0) // 주중에만 도전 (예: 수요일부터 일요일까지)
 )
 
 object DateUtils {
@@ -93,7 +93,7 @@ fun addChallengeToFirebase() {
         challengeOwner = FirebaseManager.getUID(),
         position = listOf(37.7749F, -122.4194F),
         goal = 42,
-        successTime = listOf(0, 0, 0, 1, 1, 1, 1)
+        successTime = listOf(0, 0, 0, 0, 0, 0, 0)
     )
 
     // Push the challenge to Firebase
@@ -213,6 +213,7 @@ class HomeFragment : Fragment() {
     private var currentDayOfWeek: Int = 0
     private val binding get() = _binding!!
     private var cheertext : (String) = "기본값 : 에러가 났어요!"
+    private var cheercounttext : (String) = "기본값 : 카운트 에러가 났어요!"
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -269,6 +270,7 @@ class HomeFragment : Fragment() {
 
         val include_home_cheer = binding.includeHomeCheer
         val textView = include_home_cheer.backgroundbutton
+        val textcountView = include_home_cheer.textcountview
         // Firebase에서 데이터 로드
         val currentUserUID = FirebaseManager.getUID() // 현재 사용자의 UID
 
@@ -288,6 +290,7 @@ class HomeFragment : Fragment() {
                     // cheerview
                     cheerupdate()
                     textView.text = cheertext
+                    textcountView.text = cheercounttext
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -322,7 +325,7 @@ class HomeFragment : Fragment() {
             else -> cheertext = "계산 에러가 났어요"
             // 추가적으로 0이나 음수 등의 경우를 처리할 수도 있습니다.
         }
-//        cheertext = "$countMatching / $totalItemCount \n $cheertext "
+        cheercounttext = "$countMatching / $totalItemCount "
 
     }
 

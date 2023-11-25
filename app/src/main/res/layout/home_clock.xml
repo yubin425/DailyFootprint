@@ -24,7 +24,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="20dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/frameLayout"
@@ -35,18 +35,18 @@
             android:id="@+id/textClock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:format12Hour="yyyy년 MM월 dd일"
-            android:format24Hour="yyyy년 MM월 dd일"
-            android:textSize="18sp"
+            android:format12Hour="yyyy년 MM월 dd일 (EEE)"
+            android:format24Hour="yyyy년 MM월 dd일 (EEE)"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextClock
             android:id="@+id/textClock2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:format12Hour="HH:mm:ss"
+            android:format12Hour="hh:mm:ss a"
             android:format24Hour="HH:mm:ss"
-            android:textSize="38sp"
+            android:textSize="33sp"
             android:textStyle="bold" />
 
     </LinearLayout>

@@ -72,6 +72,8 @@ class UserGrassAdapter(private val userCodeList: List<String>) : RecyclerView.Ad
             val grassView = View(holder.itemView.context)
 
             val preDateToString = previousDate.toString()
+
+            Log.w("preDateToString",preDateToString)
             var isAchieved = false
 
             for (i in successData) {
@@ -88,6 +90,7 @@ class UserGrassAdapter(private val userCodeList: List<String>) : RecyclerView.Ad
                     grassView.setBackgroundResource(R.drawable.square_lightgreen_cell)
                     consecutive += 1
                     isAchieved = true
+                    Log.w("0",preDateToString)
                     break
                 }
             }
