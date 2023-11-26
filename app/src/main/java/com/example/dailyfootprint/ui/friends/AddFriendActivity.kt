@@ -25,8 +25,12 @@ class AddFriendActivity : AppCompatActivity() {
         var myName : String? = ""
         var searchName : String? = ""
 
+<<<<<<< Updated upstream
         val userId = FirebaseManager.getUID()
         getName(userId,
+=======
+        FirebaseManager.getName(userId,
+>>>>>>> Stashed changes
             callback = { userName ->
                 // 데이터 가져오기 성공 시 호출
                 myName = userName
@@ -96,7 +100,24 @@ class AddFriendActivity : AppCompatActivity() {
         }
     }
 
+<<<<<<< Updated upstream
     private fun getName(userCode: String, callback: (String?) -> Unit, onError: (DatabaseError) -> Unit) {
+=======
+    // 친구요청 버튼 활성화 함수
+    private fun requestButtonEnable() {
+        binding.requestButton.isEnabled = true
+        binding.requestButton.setBackgroundResource(R.drawable.round_green_button)
+    }
+
+    // 친구요청 버튼 비활성화 함수
+    private fun requestButtonDisable() {
+        binding.requestButton.isEnabled = false
+        binding.requestButton.setBackgroundResource(R.drawable.round_gray_button)
+    }
+
+    // 사용자 코드를 입력받은 뒤 사용자의 이름을 가져오는 함수
+    /*private fun getName(userCode: String, callback: (String?) -> Unit, onError: (DatabaseError) -> Unit) {
+>>>>>>> Stashed changes
         val userNameRef = databaseReference.child("user/$userCode/userName")
 
         userNameRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -110,7 +131,7 @@ class AddFriendActivity : AppCompatActivity() {
                 onError(databaseError)
             }
         })
-    }
+    }*/
 
     private fun searchPerson(searchName: String, callback: (Boolean) -> Unit, onError: (DatabaseError) -> Unit) {
         val userRef = FirebaseManager.userDatabaseReference

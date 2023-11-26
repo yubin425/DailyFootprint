@@ -81,7 +81,7 @@ import com.google.firebase.database.ValueEventListener
 class FriendsFragment : Fragment(R.layout.fragment_friends) {
 
     private lateinit var binding: FragmentFriendsBinding
-    private var friendCodeList = arrayListOf<String>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -108,32 +108,34 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
         data.add(friend1)
         data.add(friend2)*/
 
-        addFriendsInfo(FirebaseManager.getUID())
-
-        // 리사이클러뷰 아이템 간 간격 설정
-        binding.recyclerView.addItemDecoration(GrassDecoration(80))
-
-        binding.recyclerView.adapter = UserGrassAdapter(friendCodeList)
-
-
+        addFriendsInfo(FirebaseManager.getUID(),
+            callback = {friends ->
+                // 리사이클러뷰 아이템 간 간격 설정
+                binding.recyclerView.addItemDecoration(GrassDecoration(80))
+                binding.recyclerView.adapter = UserGrassAdapter(friends)
+            },
+            onError = {error ->
+                Log.w("Error: ", error.message)
+            })
     }
 
-    private fun addFriendsInfo(userCode: String) {
+    private fun addFriendsInfo(userCode: String, callback: (List<String>) -> Unit, onError: (DatabaseError) -> Unit) {
         val friendListRef = databaseReference.child("user/$userCode/friendList")
-        Log.w("ref:" , friendListRef.toString())
+        var friendCodeList = arrayListOf<String>()
 
         friendListRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (friendSnapshot in snapshot.children) {
                     val friend = friendSnapshot.getValue(String::class.java)
-                    friend?.let {
+                        friend?.let {
                         friendCodeList.add(it)
                     }
                 }
+                callback(friendCodeList)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.w("fail: ", "fail to load friends")
+                onError(databaseError)
             }
         })
     }
