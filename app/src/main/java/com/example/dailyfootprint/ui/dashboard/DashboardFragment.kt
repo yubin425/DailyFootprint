@@ -121,6 +121,7 @@ class MyAdapter() :
         holder.delChallBtn.setOnClickListener {
             val context = holder.itemView.context
             val intent = Intent(context, ChallengeActivity::class.java)
+            intent.putExtra("challengeCode", challengeList[position].challengeCode)
             context.startActivity(intent)
         }
     }
@@ -153,8 +154,10 @@ class MyAdapter() :
                             }
                         }
                     }
+
                     //updateDayColors()
                     notifyDataSetChanged()
+
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -187,7 +190,7 @@ class DashboardFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewAdapter: MyAdapter
     private lateinit var viewManager: LinearLayoutManager
 
     override fun onCreateView(
@@ -203,8 +206,7 @@ class DashboardFragment : Fragment() {
         viewManager = LinearLayoutManager(context, VERTICAL, false)
 
         viewAdapter = MyAdapter()
-        Log.d("DashboardFragment", "MyAdapter instance created: $viewAdapter")
-        (viewAdapter as MyAdapter).initialize()
+        viewAdapter.initialize() // 어댑터 초기화 및 데이터 가져오기
 
         val recyclerView: RecyclerView = binding.recyclerviewMain
         recyclerView.apply {
