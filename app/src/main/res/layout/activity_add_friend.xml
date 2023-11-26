@@ -99,7 +99,7 @@
             app:layout_constraintBaseline_toTopOf="parent"
             app:srcCompat="@drawable/round_white_button" />
     </androidx.cardview.widget.CardView>
-    
+
     <androidx.cardview.widget.CardView
         android:id="@+id/searchResult"
         android:layout_width="match_parent"
