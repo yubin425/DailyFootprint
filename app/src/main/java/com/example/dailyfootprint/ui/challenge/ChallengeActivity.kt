@@ -11,6 +11,7 @@ import androidx.core.widget.addTextChangedListener
 import com.example.dailyfootprint.databinding.ActivityChallengeBinding
 import com.example.dailyfootprint.model.Challenge
 import com.example.dailyfootprint.R
+import com.example.dailyfootprint.ui.Map.MapsActivity
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -45,7 +46,9 @@ class ChallengeActivity : AppCompatActivity() {
 
         locationEditText = findViewById(R.id.challengeview_location_edittext)
         binding.challengeviewSearchButton.setOnClickListener {
-            performPlaceAPI()
+            // performPlaceAPI()
+            val intent = Intent(this, MapsActivity::class.java)
+            startActivity(intent)
         }
 
         binding.challengeviewNameEdittext.addTextChangedListener {
@@ -70,7 +73,7 @@ class ChallengeActivity : AppCompatActivity() {
         val isAddButtonEnabled = challengeName.isNotEmpty() && location.isNotEmpty()
         binding.challengeviewAddButton.isEnabled = isAddButtonEnabled
     }
-
+/*
     private fun performPlaceAPI() {
         val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS)
         val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
@@ -99,7 +102,7 @@ class ChallengeActivity : AppCompatActivity() {
                  */
             }
         }
-    }
+    }*/
 
     private fun saveValues() {
         val challengeName = binding.challengeviewNameEdittext.text.toString()

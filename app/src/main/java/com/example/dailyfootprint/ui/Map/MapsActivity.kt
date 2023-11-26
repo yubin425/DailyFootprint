@@ -25,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.dailyfootprint.databinding.ActivityMapsBinding
+import com.example.dailyfootprint.ui.challenge.ChallengeActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
@@ -57,7 +58,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Places 라이브러리 초기화
         if (!Places.isInitialized()) {
-            Places.initialize(applicationContext, "AIzaSyB_7LSzaKbT7-EhBo7-qzl6APfc7uFczfs")
+            Places.initialize(applicationContext, "AIzaSyC_XJNrBPpiRKSTnb9QnkSfcts6XOE0Leo")
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -82,6 +83,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
 
         // Specify the types of place data to return
+        autocompleteFragment.setHint("원하는 장소를 검색하세요.")
         autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG))
 
 
@@ -114,10 +116,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         roundGreenButton.setOnClickListener {
             // 버튼 클릭 시, AnotherActivity로 이동하면서 위치 정보 전달
             selectedLocation?.let {
-                //val intent = Intent(this, AnotherActivity::class.java)
-                //intent.putExtra("latitude", it.latitude)
-                //intent.putExtra("longitude", it.longitude)
-                //startActivity(intent)
+                val intent = Intent(this, ChallengeActivity::class.java)
+                intent.putExtra("latitude", it.latitude)
+                intent.putExtra("longitude", it.longitude)
+                startActivity(intent)
             }
             Log.i(TAG, "BUTTON CLICKED")
         }
