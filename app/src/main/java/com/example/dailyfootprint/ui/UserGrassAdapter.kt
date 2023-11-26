@@ -34,13 +34,8 @@ class UserGrassAdapter(private val friendCodeList: List<String>) : RecyclerView.
 
     // View에 내용이 씌워질 때 호출
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-<<<<<<< Updated upstream
         val userCode = friendCodeList[position]
         var successData = arrayListOf<String>()
-=======
-        val userCode = userCodeList[position]
-
->>>>>>> Stashed changes
         val userRef = databaseReference.child("user/$userCode")
 
         Log.w("user: ", userCode)
@@ -90,6 +85,8 @@ class UserGrassAdapter(private val friendCodeList: List<String>) : RecyclerView.
                                 grassView.setBackgroundResource(R.drawable.square_gray_cell)
                                 consecutive = 0
                             }
+
+
 
 
 
