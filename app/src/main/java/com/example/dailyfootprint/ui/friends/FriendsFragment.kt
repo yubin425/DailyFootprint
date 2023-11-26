@@ -127,7 +127,7 @@ class FriendsFragment : Fragment(R.layout.fragment_friends) {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (friendSnapshot in snapshot.children) {
                     val friend = friendSnapshot.getValue(String::class.java)
-                        friend?.let {
+                    friend?.let {
                         friendCodeList.add(it)
                     }
                 }
