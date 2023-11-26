@@ -28,15 +28,15 @@ class AddFriendActivity : AppCompatActivity() {
         var requestId : String? = ""
 
         getName(userId,
-                callback = { userName ->
-                    // 데이터 가져오기 성공 시 호출
-                    myName = userName
-                    binding.cardViewUserName.text = userName
-                },
-                onError = { error ->
-                    // 데이터 가져오기 실패 시 호출
-                    Log.w("Error: ", error.message)
-                }
+            callback = { userName ->
+                // 데이터 가져오기 성공 시 호출
+                myName = userName
+                binding.cardViewUserName.text = userName
+            },
+            onError = { error ->
+                // 데이터 가져오기 실패 시 호출
+                Log.w("Error: ", error.message)
+            }
         )
 
         // 검색 버튼을 눌렀을 때의 동작
@@ -99,13 +99,6 @@ class AddFriendActivity : AppCompatActivity() {
                     }
                 )
             }
-        }
-
-        // 친구요청 버튼을 눌렀을 때의 동작
-        binding.requestButton.setOnClickListener {
-            requestFriend(userId, requestId.toString())
-            Toast.makeText(this, "친구 요청을 보냈습니다.", Toast.LENGTH_SHORT).show()
-            requestButtonDisable()
         }
 
         // 친구요청 버튼을 눌렀을 때의 동작

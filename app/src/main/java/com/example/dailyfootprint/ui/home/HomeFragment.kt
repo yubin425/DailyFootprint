@@ -291,6 +291,7 @@ class HomeFragment : Fragment() {
                     cheerupdate()
                     textView.text = cheertext
                     textcountView.text = cheercounttext
+                    recyclerViewgrass.layoutManager = LinearLayoutManager(recyclerViewgrass.context)
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
