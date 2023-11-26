@@ -58,7 +58,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Places 라이브러리 초기화
         if (!Places.isInitialized()) {
-            Places.initialize(applicationContext, "AIzaSyC_XJNrBPpiRKSTnb9QnkSfcts6XOE0Leo")
+            Places.initialize(applicationContext, "AIzaSyB_7LSzaKbT7-EhBo7-qzl6APfc7uFczfs")
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager

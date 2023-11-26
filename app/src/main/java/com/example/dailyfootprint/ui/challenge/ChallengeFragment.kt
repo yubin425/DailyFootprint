@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.FragmentChallengeBinding
+import com.example.dailyfootprint.ui.Map.MapsActivity
 
 class ChallengeFragment : Fragment(R.layout.fragment_challenge) {
 

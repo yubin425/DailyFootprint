@@ -22,4 +22,10 @@
         android:name="com.example.dailyfootprint.ui.friends.FriendsFragment"
         android:label="Friends"
         tools:layout="@layout/fragment_friends" />
+
+    <fragment
+        android:id="@+id/navigation_challenge"
+        android:name="com.example.dailyfootprint.ui.challenge.ChallengeFragment"
+        android:label="Challenge"
+        tools:layout="@layout/fragment_challenge" />
 </navigation>

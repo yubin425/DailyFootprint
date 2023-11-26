@@ -16,4 +16,8 @@
         android:icon="@drawable/ic_friends_black_24dp"
         android:title="Friends" />
 
+    <item
+        android:id="@+id/navigation_challenge"
+        android:icon="@drawable/ic_friends_black_24dp"
+        android:title="Challenge" />
 </menu>
