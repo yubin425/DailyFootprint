@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentTransaction
 import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.ActivityChallengeBinding
@@ -21,6 +22,7 @@ import com.example.dailyfootprint.databinding.DelChallengeDialogBinding
 import com.example.dailyfootprint.databinding.FragmentDashboardBinding
 import com.example.dailyfootprint.model.Challenge
 import com.google.firebase.Firebase
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
 
 class ChallengeActivity : AppCompatActivity() {
@@ -30,7 +32,6 @@ class ChallengeActivity : AppCompatActivity() {
     val database = Firebase.database(firebaseDatabaseUrl)
     val challRef = database.reference.child("challenges")
     private var currentChallenge: String? = null
-
     /*
     val bundle = Bundle()
     val fragment = DashboardFragment()
@@ -46,7 +47,7 @@ class ChallengeActivity : AppCompatActivity() {
         binding =FragmentDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val fragmentContainer = findViewById<FrameLayout>(R.id.fragment_container)
+        val fragmentContainer = findViewById<ConstraintLayout>(R.id.fragment_container)
         if (fragmentContainer != null) {
             Log.d("ChallengeActivity", "fragment_container found")
         } else {
@@ -75,13 +76,20 @@ class ChallengeActivity : AppCompatActivity() {
 
         val okButton = mDialogView.findViewById<Button>(R.id.delete_grbtn)
         okButton.setOnClickListener {
+            // ChallengeActivity의 멤버 변수로 설정된 currentChallenge를 사용
+       //   val delChallenge = currentChallenge
             Log.d("ChallengeActivity", "Deleting Challenge: $currentChallenge")
-            //파이어베이스, 챌린지 삭제
-            challRef.removeValue()
-            Toast.makeText(this, "챌린지가 삭제되었습니다", Toast.LENGTH_SHORT).show()
 
+            if (currentChallenge != null) {
+                // 파이어베이스에서 챌린지 삭제
+               //al challengeRef = challRef.child(delChallenge)
+                challRef.child(currentChallenge!!).removeValue()
+
+                Toast.makeText(this, "챌린지가 삭제되었습니다", Toast.LENGTH_SHORT).show()
+            }
 
             mAlertDialog.dismiss()
+            finish()
 
                 /*
                 fragmentTransaction.replace(
@@ -89,33 +97,40 @@ class ChallengeActivity : AppCompatActivity() {
                     DashboardFragment()
                 )
                 fragmentTransaction.commit()
-                */
+
             addDashboardFragment(fragmentTransaction)
+                 */
 
         }
 
         val noButton = mDialogView.findViewById<Button>(R.id.delete_redbtn)
         noButton.setOnClickListener {
             mAlertDialog.dismiss()
+            finish()
 
+/*
             fragmentTransaction.replace(
                 R.id.fragment_container,
                 DashboardFragment()
             )
             fragmentTransaction.commit()
+*/
         }
+
 
         val dialogContainer = mDialogView.findViewById<LinearLayout>(R.id.dial)
         dialogContainer.setOnClickListener {
             mAlertDialog.dismiss()
+            finish()
             /*
             fragmentTransaction.replace(
                 R.id.fragment_container,
                 DashboardFragment()
             )
             fragmentTransaction.commit()
-            */
+
             addDashboardFragment(fragmentTransaction)
+             */
 
         }
 
@@ -125,13 +140,14 @@ class ChallengeActivity : AppCompatActivity() {
 
     }
 
+    /*
     private fun addDashboardFragment(fragmentTransaction: FragmentTransaction) {
         val dashboardFragment = DashboardFragment()
         fragmentTransaction.replace(R.id.fragment_container, dashboardFragment)
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
 
-        /*
+
         val existingFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container)
 
@@ -149,7 +165,7 @@ class ChallengeActivity : AppCompatActivity() {
 
         fragmentTransaction.commit()
 
-         */
-    }
 
+    }
+*/
 }

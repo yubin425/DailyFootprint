@@ -48,14 +48,16 @@ import java.util.Locale
 import java.util.UUID
 
 
+
 val exampleChallenge = Challenge(
     challengeCode = "CH001",
     challengeName = "테스트", // home에서 사용
     challengeOwner = "Alice",
-    position = listOf(37.7749F, -122.4194F), // home에서 사용
+    position = arrayListOf(37.7749F, -122.4194F), // home에서 사용
     goal = 42, // 마라톤의 길이 (킬로미터)
-    successTime = listOf(0, 0, 0, 0, 0, 0, 0) // 주중에만 도전 (예: 수요일부터 일요일까지)
+    successTime = arrayListOf(0, 0, 0, 0, 0, 0, 0) // 주중에만 도전 (예: 수요일부터 일요일까지)
 )
+
 
 object DateUtils {
     fun getAdjustedDayOfWeek(): Int {
@@ -91,9 +93,9 @@ fun addChallengeToFirebase() {
         challengeCode = UUID.randomUUID().toString(),
         challengeName = "얘는 제목",
         challengeOwner = FirebaseManager.getUID(),
-        position = listOf(37.7749F, -122.4194F),
+        position = arrayListOf(37.7749F, -122.4194F),
         goal = 42,
-        successTime = listOf(0, 0, 0, 0, 0, 0, 0)
+        successTime = arrayListOf(0, 0, 0, 0, 0, 0, 0)
     )
 
     // Push the challenge to Firebase

@@ -9,6 +9,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.dailyfootprint.databinding.ActivityMainBinding
+import com.example.dailyfootprint.model.Challenge
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,5 +35,14 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+
+
+        val firebaseDatabaseUrl =
+            "https://dailyfootprint-aeac7-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        val database = Firebase.database(firebaseDatabaseUrl)
+        val challRef = database.reference.child("challenges")
+
     }
+
 }

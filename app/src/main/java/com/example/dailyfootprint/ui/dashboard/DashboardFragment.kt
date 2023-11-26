@@ -42,6 +42,7 @@ class MyAdapter() :
     private val challengeList = mutableListOf<Challenge>()
     private lateinit var userId: String
 
+
     private fun initializeUserId() {
         userId = FirebaseManager.getUID()
     }
@@ -132,6 +133,8 @@ class MyAdapter() :
             "https://dailyfootprint-aeac7-default-rtdb.asia-southeast1.firebasedatabase.app/"
         val database = Firebase.database(firebaseDatabaseUrl)
         val challRef = database.reference.child("challenges")
+
+
         val challOwner = challRef.child("challengeOwner").toString()
 
         //currentUser 랑 challengeOwner 확인하는거 추가해야함
