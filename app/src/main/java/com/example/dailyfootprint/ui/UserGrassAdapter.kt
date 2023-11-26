@@ -1,5 +1,6 @@
 package com.example.dailyfootprint.ui
 
+import FirebaseManager
 import FirebaseManager.databaseReference
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.ItemUsergrassBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import org.joda.time.LocalDate
 
@@ -36,98 +38,112 @@ class UserGrassAdapter(private val userCodeList: List<String>) : RecyclerView.Ad
         var successData = arrayListOf<String>()
         val userRef = databaseReference.child("user/$userCode")
 
-        userRef.child("userName").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val userName = snapshot.getValue(String::class.java)
+        Log.w("user: ", userCode)
+
+
+        FirebaseManager.getName(userCode,
+            callback = { userName ->
                 holder.binding.textViewUsername.text = userName
-            }
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w("Fail: ", "fail to get userName")
-            }
-        })
+                getSuccessData(userRef,
+                    callback = {successData ->
+                        Log.w("successData:", successData.toString())
+
+                        // Clear existing views in GridLayout
+                        holder.binding.gridLayoutGrass.removeAllViews()
+
+                        // 140개의 날짜 데이터를 그려야 하므로 139일 전부터 오늘까지의 날짜 별 인증 여부 확인
+                        var previousDate = LocalDate.now().minusDays(139)
+                        var consecutive = 0
+
+                        for (i in 0 until 140) {
+                            val grassView = View(holder.itemView.context)
+
+                            val preDateToString = previousDate.toString()
+                            var isAchieved = false
+
+                            if (successData != null) {
+                                for (i in successData) {
+                                    if (preDateToString == i && consecutive == 2) {
+                                        grassView.setBackgroundResource(R.drawable.square_darkgreen_cell)
+                                        isAchieved = true
+                                        break
+                                    } else if (preDateToString == i && consecutive == 1) {
+                                        grassView.setBackgroundResource(R.drawable.square_green_cell)
+                                        consecutive += 1
+                                        isAchieved = true
+                                        break
+                                    } else if (preDateToString == i && consecutive == 0) {
+                                        grassView.setBackgroundResource(R.drawable.square_lightgreen_cell)
+                                        consecutive += 1
+                                        isAchieved = true
+                                        break
+                                    }
+                                }
+                            }
+                            // 해당 날짜에 인증
+                            if (!isAchieved) {
+                                grassView.setBackgroundResource(R.drawable.square_gray_cell)
+                                consecutive = 0
+                            }
+
+
+
+
+
+                            // GridLayout을 위한 parameter 설정
+                            val params = GridLayout.LayoutParams()
+                            val screenWidth = holder.itemView.context.resources.displayMetrics.widthPixels
+                            // 각 셀의 위치 설정
+                            params.rowSpec = GridLayout.spec(6-(i%7)) // 셀의 row 위치값 계산
+                            params.columnSpec = GridLayout.spec(i/7) // 셀의 column 위치값 계산
+                            // 셀 간 간격 설정 - 가로 화면 비율에 맞게 조정
+                            params.topMargin = screenWidth/270
+                            params.bottomMargin = screenWidth/270
+                            params.leftMargin = screenWidth/270
+                            params.rightMargin = screenWidth/270
+                            //params.width = (screenWidth-24-params.topMargin*40-120)/20
+                            //params.height = (screenWidth-24-params.topMargin*40-120)/20
+                            params.width = screenWidth/28
+                            params.height = screenWidth/28
+
+                            grassView.layoutParams = params
+
+                            // GridLayout에 잔디 추가
+                            holder.binding.gridLayoutGrass.addView(grassView)
+
+                            previousDate = previousDate.plusDays(1)
+                        }
+                    },
+                    onError = {error ->
+                        Log.w("Error: ", error.message)
+                    })
+            },
+            onError = { error ->
+                Log.w("Error: ", error.message)
+            })
+    }
+
+    override fun getItemCount(): Int {
+        return userCodeList.size
+    }
+
+    private fun getSuccessData(userRef: DatabaseReference, callback: (List<String>) -> Unit, onError: (DatabaseError) -> Unit) {
+        var successData = arrayListOf<String>()
 
         userRef.child("successData").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (successDataSnaphot in snapshot.children) {
-                    val date = successDataSnaphot.getKey()
-                    Log.w("firebase",date.toString())
+                    val date = successDataSnaphot.key
                     date?.let {
+                        Log.w("success: ", it)
                         successData.add(it)
                     }
                 }
+                callback(successData)
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("Fail: ", "fail to get successData")
             }
         })
-
-        // Clear existing views in GridLayout
-        holder.binding.gridLayoutGrass.removeAllViews()
-
-        // 140개의 날짜 데이터를 그려야 하므로 139일 전부터 오늘까지의 날짜 별 인증 여부 확인
-        var previousDate = LocalDate.now().minusDays(139)
-        var consecutive = 0
-
-        for (i in 0 until 140) {
-            val grassView = View(holder.itemView.context)
-
-            val preDateToString = previousDate.toString()
-
-            Log.w("preDateToString",preDateToString)
-            var isAchieved = false
-
-            for (i in successData) {
-                if (preDateToString == i && consecutive == 2) {
-                    grassView.setBackgroundResource(R.drawable.square_darkgreen_cell)
-                    isAchieved = true
-                    break
-                } else if (preDateToString == i && consecutive == 1) {
-                    grassView.setBackgroundResource(R.drawable.square_green_cell)
-                    consecutive += 1
-                    isAchieved = true
-                    break
-                } else if (preDateToString == i && consecutive == 0) {
-                    grassView.setBackgroundResource(R.drawable.square_lightgreen_cell)
-                    consecutive += 1
-                    isAchieved = true
-                    Log.w("0",preDateToString)
-                    break
-                }
-            }
-            // 해당 날짜에 인증
-            if (!isAchieved) {
-                grassView.setBackgroundResource(R.drawable.square_gray_cell)
-                consecutive = 0
-            }
-
-
-
-            // GridLayout을 위한 parameter 설정
-            val params = GridLayout.LayoutParams()
-            val screenWidth = holder.itemView.context.resources.displayMetrics.widthPixels
-            // 각 셀의 위치 설정
-            params.rowSpec = GridLayout.spec(6-(i%7)) // 셀의 row 위치값 계산
-            params.columnSpec = GridLayout.spec(i/7) // 셀의 column 위치값 계산
-            // 셀 간 간격 설정 - 가로 화면 비율에 맞게 조정
-            params.topMargin = screenWidth/270
-            params.bottomMargin = screenWidth/270
-            params.leftMargin = screenWidth/270
-            params.rightMargin = screenWidth/270
-            //params.width = (screenWidth-24-params.topMargin*40-120)/20
-            //params.height = (screenWidth-24-params.topMargin*40-120)/20
-            params.width = screenWidth/28
-            params.height = screenWidth/28
-
-            grassView.layoutParams = params
-
-            // GridLayout에 잔디 추가
-            holder.binding.gridLayoutGrass.addView(grassView)
-
-            previousDate = previousDate.plusDays(1)
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return userCodeList.size
     }
 }
