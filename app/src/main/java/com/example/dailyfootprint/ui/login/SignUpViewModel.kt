@@ -64,9 +64,9 @@ class SignUpViewModel : ViewModel() {
 
     fun checkValid(input : String) {
         // editText 에서 입력받은 string이 유효한지 확인 (빈칸, 10자 이상, 특수문자 일 경우에는 idValid 값을 false로)
-        _isValid.value = !input.isBlank() && input.length >= 10 && !containsSpecialCharacter(input)
+        _isValid.value = !input.isBlank() && input.length <= 10 && !containsSpecialCharacter(input)
         // 새로운 텍스트가 입력되었다는 뜻이기 때문에 중복확인 초기화
-        _isValid.value = true
+        // _isValid.value = true
         Log.w("name is valid", input)
     }
 

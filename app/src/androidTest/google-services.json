@@ -1,0 +1,104 @@
+{
+  "project_info": {
+    "project_number": "886906283637",
+    "firebase_url": "https://dailyfootprint-aeac7-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "dailyfootprint-aeac7",
+    "storage_bucket": "dailyfootprint-aeac7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:886906283637:android:87d118087b95e2e756fa3c",
+        "android_client_info": {
+          "package_name": "com.example.dailyfootprint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "886906283637-016h1urep81fafosn4pf1sfgn318pppg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dailyfootprint",
+            "certificate_hash": "1f263d6e356d2d152b02bd2725a8d055d99ec186"
+          }
+        },
+        {
+          "client_id": "886906283637-0sl2v0ubeg119g0qjslnh85gl8k0e889.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dailyfootprint",
+            "certificate_hash": "9fab01451adb31e2313afd026920b6bb85609d80"
+          }
+        },
+        {
+          "client_id": "886906283637-2lf5ii855166t1qnflp9r44leipcs9lk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dailyfootprint",
+            "certificate_hash": "1e04946b5825b3c73711e2beaad9e786cea22ee6"
+          }
+        },
+        {
+          "client_id": "886906283637-84pt5hqu0eudh4ujukkuituch9gv7ihf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dailyfootprint",
+            "certificate_hash": "5572f88a157ac6aebd99b1da3667f100a5f4c89d"
+          }
+        },
+        {
+          "client_id": "886906283637-bg9hb0kd2f97gjitn2u4ju8dpl2a3eok.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dailyfootprint",
+            "certificate_hash": "441e09c82b4ab0907dac3cafa093441b1d678b13"
+          }
+        },
+        {
+          "client_id": "886906283637-gorkhn3m2o0m8mtuspqhvnhgm83j4hth.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dailyfootprint",
+            "certificate_hash": "2c86ce4e16d669f9280deeb310c0ded6af3861f0"
+          }
+        },
+        {
+          "client_id": "886906283637-uff8hles0d818agkuqtejmcvrjrqc01v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dailyfootprint",
+            "certificate_hash": "6ad694a8c76864e4310bc19e32c8d1da4fdc9395"
+          }
+        },
+        {
+          "client_id": "886906283637-uk6q4ss5t5v7l6d1uvaa2moudh54j83l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dailyfootprint",
+            "certificate_hash": "c0b17e44657fed79722078098d45299eec9e45b4"
+          }
+        },
+        {
+          "client_id": "886906283637-5363vlhbjnraj5ggbumv7ro815kjqfof.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVvhvbNwd41AHxr6546H4v9RA2DMA-qOA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "886906283637-5363vlhbjnraj5ggbumv7ro815kjqfof.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
