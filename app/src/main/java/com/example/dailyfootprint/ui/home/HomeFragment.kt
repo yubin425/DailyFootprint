@@ -224,7 +224,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-//        addChallengeToFirebase()
+        addChallengeToFirebase()
         // 네비게이션 바 숨기기
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
 
