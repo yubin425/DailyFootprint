@@ -24,9 +24,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import com.example.dailyfootprint.ui.dashboard.ChallengeActivity
 import com.example.dailyfootprint.databinding.FragmentDashboardBinding
-import com.example.dailyfootprint.databinding.ActivityChallengeBinding
+import com.example.dailyfootprint.databinding.ActivityChallengeviewBinding
 
 
 import com.example.dailyfootprint.R
@@ -66,7 +65,7 @@ class MyAdapter() :
                                     viewType: Int): MyAdapter.MyViewHolder {
         // create a new view
         val cardView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.activity_challenge, parent, false)
+            .inflate(R.layout.activity_challengeview, parent, false)
 
         return MyViewHolder(cardView)
     }
@@ -267,7 +266,6 @@ class WeeklyCleanupScheduler(private val context: Context) {
         return nextSaturday
     }
 }
-
 
 class DashboardFragment : Fragment() {
 

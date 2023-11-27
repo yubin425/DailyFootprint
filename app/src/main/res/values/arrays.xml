@@ -1,0 +1,12 @@
+<resources>
+    <string-array name="periods">
+        <item>자 유</item>
+        <item>주 1일</item>
+        <item>주 2일</item>
+        <item>주 3일</item>
+        <item>주 4일</item>
+        <item>주 5일</item>
+        <item>주 6일</item>
+        <item>주 7일</item>
+    </string-array>
+</resources>

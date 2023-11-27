@@ -13,6 +13,8 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.dailyfootprint.R
@@ -25,6 +27,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.dailyfootprint.databinding.ActivityMapsBinding
+import com.example.dailyfootprint.ui.challenge.ChallengeActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
@@ -48,6 +51,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private val DEFAULT_ZOOM_LEVEL = 17f
     private val TAG = "MapsActivity"
     private var selectedLocation: LatLng? = null
+    private lateinit var locationName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +86,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
 
         // Specify the types of place data to return
+        autocompleteFragment.setHint("원하는 장소를 검색하세요.")
         autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG))
 
 
@@ -99,28 +104,29 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         )
                     )
                 }
-                // 추가: Log를 사용하여 디버깅 메시지 출력
-                Log.d(TAG, "onPlaceSelected called. Place: ${place.name}, LatLng: $selectedLocation")
-                Log.d(TAG, "Place details: ${place.toString()}")
-            }
+                val locationName = place.name.toString()
 
+                // 추가: Log를 사용하여 디버깅 메시지 출력
+                Log.d(TAG, "onPlaceSelected called. Place: ${locationName}, LatLng: $selectedLocation")
+                Log.d(TAG, "Place details: ${place.toString()}")
+
+                val roundGreenButton: Button = findViewById(R.id.roundGreenButton)
+                roundGreenButton.setOnClickListener {
+                    // 버튼 클릭 시, AnotherActivity로 이동하면서 위치 정보 전달
+                    val intent = Intent(this@MapsActivity, ChallengeActivity::class.java)
+                    intent.putExtra("name", locationName)
+                    startActivity(intent)
+                    finish()
+
+                    Log.i(TAG, "BUTTON CLICKED")
+                }
+            }
             override fun onError(status: Status) {
                 // Handle the error
                 Log.i(TAG, "An error occurred: $status")
             }
         })
         CurrentLocation()
-        val roundGreenButton: Button = findViewById(R.id.roundGreenButton)
-        roundGreenButton.setOnClickListener {
-            // 버튼 클릭 시, AnotherActivity로 이동하면서 위치 정보 전달
-            selectedLocation?.let {
-                //val intent = Intent(this, AnotherActivity::class.java)
-                //intent.putExtra("latitude", it.latitude)
-                //intent.putExtra("longitude", it.longitude)
-                //startActivity(intent)
-            }
-            Log.i(TAG, "BUTTON CLICKED")
-        }
     }
 
     fun requestPermission(){
@@ -139,11 +145,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 permissionsLocation ,
                 REQUEST_CODE_LOCATION
             )
-
         }
-
         // }
-
     }
 
     fun isLocationPermitted(): Boolean {
