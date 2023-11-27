@@ -1,8 +1,8 @@
 package com.example.dailyfootprint.ui.challenge
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Toast
@@ -13,10 +13,7 @@ import com.example.dailyfootprint.model.Challenge
 import com.example.dailyfootprint.R
 import com.example.dailyfootprint.ui.Map.MapsActivity
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.firebase.database.*
 
 class ChallengeActivity : AppCompatActivity() {
@@ -25,11 +22,18 @@ class ChallengeActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference
     private lateinit var placesClient: PlacesClient
     private lateinit var locationEditText: EditText
+    private lateinit var challenge: Challenge
+    private val TAG = "ChallengeActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChallengeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        Log.d(TAG, "onCreate")
+
+        // 초기화
+        databaseReference = FirebaseDatabase.getInstance().reference
 
         val spinnerAdapter = ArrayAdapter.createFromResource(
             this,
@@ -40,16 +44,18 @@ class ChallengeActivity : AppCompatActivity() {
         binding.challengeviewSelectSpinner.adapter = spinnerAdapter
 
         if (!Places.isInitialized()) {
-            Places.initialize(applicationContext, getString(R.string.google_maps_api_key))
+            Places.initialize(applicationContext, "AIzaSyB_7LSzaKbT7-EhBo7-qzl6APfc7uFczfs")
         }
         placesClient = Places.createClient(this)
 
         locationEditText = findViewById(R.id.challengeview_location_edittext)
         binding.challengeviewSearchButton.setOnClickListener {
-            // performPlaceAPI()
-            val intent = Intent(this, MapsActivity::class.java)
+            finish()
+            val intent = Intent(this@ChallengeActivity, MapsActivity::class.java)
             startActivity(intent)
         }
+        val name = intent.getStringExtra("name")
+        locationEditText.setText(name)
 
         binding.challengeviewNameEdittext.addTextChangedListener {
             updateAddButtonState()
@@ -57,12 +63,13 @@ class ChallengeActivity : AppCompatActivity() {
         binding.challengeviewLocationEdittext.addTextChangedListener {
             updateAddButtonState()
         }
-
         binding.challengeviewAddButton.setOnClickListener {
             saveValues()
+            Log.d(TAG, "ADD BUTTON CLICKED.")
         }
         binding.challengeviewCancelButton.setOnClickListener {
             finish()
+            Log.d(TAG, "CANCEL BUTTON CLICKED.")
         }
     }
 
@@ -73,36 +80,6 @@ class ChallengeActivity : AppCompatActivity() {
         val isAddButtonEnabled = challengeName.isNotEmpty() && location.isNotEmpty()
         binding.challengeviewAddButton.isEnabled = isAddButtonEnabled
     }
-/*
-    private fun performPlaceAPI() {
-        val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS)
-        val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
-            .build(this)
-
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
-    }
-
-    companion object {
-        const val AUTOCOMPLETE_REQUEST_CODE = 1001
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            data?.let {
-                val place = Autocomplete.getPlaceFromIntent(it)
-                binding.challengeviewLocationEdittext.setText(place.address)
-                /*
-                val mapIntent = Intent(this, MapsActivity::class.java)
-                mapIntent.putExtra("placeName", place.name)
-                mapIntent.putExtra("placeAddress", place.address)
-
-                startActivity(mapIntent)
-                 */
-            }
-        }
-    }*/
 
     private fun saveValues() {
         val challengeName = binding.challengeviewNameEdittext.text.toString()
@@ -110,22 +87,15 @@ class ChallengeActivity : AppCompatActivity() {
         val spinnerValue = binding.challengeviewSelectSpinner.selectedItem.toString()
 
         if (challengeName.isNotEmpty()) {
-            val challengeRef = databaseReference.child("challenge")
-            val newChallengeRef = challengeRef.push()
             val newChallenge = Challenge(
                 challengeName = challengeName,
                 challengeLocation = locationValue,
                 goal = spinnerValue
             )
-
-            newChallengeRef.setValue(newChallenge)
-                .addOnSuccessListener {
-                    showToast("챌린지가 추가되었습니다.")
-                    finish()
-                }
-                .addOnFailureListener {
-                    showToast("챌린지 추가에 실패했습니다.")
-                }
+            val challengeRef = databaseReference.child("challenges")
+            val challengeKey = databaseReference.child("challenges").push().key
+            challengeRef.child(challengeKey!!).setValue(newChallenge)
+            finish()
         } else {
             showToast("챌린지 이름을 입력해주세요.")
         }
