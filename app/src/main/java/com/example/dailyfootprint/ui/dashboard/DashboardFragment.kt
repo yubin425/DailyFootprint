@@ -1,8 +1,14 @@
 package com.example.dailyfootprint.ui.dashboard
 
+import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,6 +42,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import java.util.Calendar
 
 class MyAdapter() :
     RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
@@ -96,6 +103,7 @@ class MyAdapter() :
         for ((dayViewId, success) in dayColors) {
             val dayView: TextView = progressView.findViewById(dayViewId)
             if (success == 1) {
+                /*
                 if (dayViewId == R.id.bar_sun) {
                     val drawable = ContextCompat.getDrawable(
                         progressView.context,
@@ -115,6 +123,8 @@ class MyAdapter() :
                 else {
                     dayView?.setBackgroundColor(Color.parseColor("#52B449"))
                 }
+                 */
+                dayView?.setTextColor(Color.parseColor("#52B449"))
             }
         }
 
@@ -185,6 +195,80 @@ class MyAdapter() :
     }
 }
 
+class WeeklyCleanupReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context?, intent: Intent?) {
+        if (context != null) {
+            // Firebase Realtime Database에 접근
+            val firebaseDatabaseUrl =
+                "https://dailyfootprint-aeac7-default-rtdb.asia-southeast1.firebasedatabase.app/"
+            val database = FirebaseDatabase.getInstance(firebaseDatabaseUrl)
+            val challengesRef = database.reference.child("challenges")
+
+            // challenges의 successTime을 초기화하는 작업
+            challengesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (challengeSnapshot in dataSnapshot.children) {
+                        // 현재 주의 시작 시간을 0으로 초기화
+                        val successTime = mutableListOf<Int>(0, 0, 0, 0, 0, 0, 0)
+                        challengeSnapshot.child("successTime").ref.setValue(successTime)
+                    }
+
+                    Log.d("WeeklyCleanupReceiver", "Weekly cleanup task executed.")
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.e("WeeklyCleanupReceiver", "Error cleaning up challenges: ${databaseError.toException()}")
+                }
+            })
+        }
+    }
+}
+
+class WeeklyCleanupScheduler(private val context: Context) {
+
+    @SuppressLint("ScheduleExactAlarm")
+    fun scheduleWeeklyCleanup() {
+        val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val requestCode = 0 // 정수 값으로 requestCode를 정의
+        val intent = Intent(context, WeeklyCleanupReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent,
+            PendingIntent.FLAG_IMMUTABLE)
+
+        // 다음 토요일 23시 59분 59초 계산
+        val nextSaturday = getNextSaturday()
+
+        // 주기적으로 알람 설정 (주간마다)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmMgr.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP,
+                nextSaturday.timeInMillis,
+                pendingIntent
+            )
+        } else {
+            alarmMgr.setExact(
+                AlarmManager.RTC_WAKEUP,
+                nextSaturday.timeInMillis,
+                pendingIntent
+            )
+        }
+    }
+
+    private fun getNextSaturday(): Calendar {
+        val calendar = Calendar.getInstance()
+        val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+        val daysUntilSaturday = (Calendar.SATURDAY - currentDayOfWeek + 7) % 7
+        val nextSaturday = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, 23)
+            set(Calendar.MINUTE, 59)
+            set(Calendar.SECOND, 59)
+            add(Calendar.DAY_OF_WEEK, daysUntilSaturday)
+        }
+        return nextSaturday
+    }
+}
+
+
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
@@ -195,6 +279,7 @@ class DashboardFragment : Fragment() {
 
     private lateinit var viewAdapter: MyAdapter
     private lateinit var viewManager: LinearLayoutManager
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -217,6 +302,8 @@ class DashboardFragment : Fragment() {
             adapter = viewAdapter
         }
 
+        val cleanupScheduler = WeeklyCleanupScheduler(requireContext())
+        cleanupScheduler.scheduleWeeklyCleanup()
 
         /*   챌린지 추가 버튼 클릭 시, 챌린지 추가 화면으로 이동
         val challAddBtn: Button = view.findViewById(R.id.addchallnege_btn)

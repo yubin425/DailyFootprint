@@ -7,7 +7,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="328dp"
-        android:layout_height="125dp"
+        android:layout_height="128dp"
         app:cardCornerRadius="24dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -133,64 +133,92 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_marginTop="15dp">
+                android:layout_marginTop="10dp">
 
 
                 <TextView
                     android:id="@+id/bar_sun"
-                    android:layout_width="32dp"
-                    android:layout_height="15dp"
-                    android:background="@drawable/dashboard_challenge_progressbarstart"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp" />
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:text="S"
+                    android:textSize="20sp"
+                    android:textColor="#E9E9E9"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"/>
 
                 <TextView
                     android:id="@+id/bar_mon"
-                    android:layout_width="32dp"
-                    android:layout_height="15dp"
-                    android:background="@drawable/dashboard_challenge_progressbar"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp" />
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:text="M"
+                    android:textSize="20sp"
+                    android:textColor="#E9E9E9"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"/>
 
                 <TextView
                     android:id="@+id/bar_tue"
-                    android:layout_width="32dp"
-                    android:layout_height="15dp"
-                    android:background="@drawable/dashboard_challenge_progressbar"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp" />
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:text="T"
+                    android:textSize="20sp"
+                    android:textColor="#E9E9E9"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"/>
 
                 <TextView
                     android:id="@+id/bar_wed"
-                    android:layout_width="32dp"
-                    android:layout_height="15dp"
-                    android:background="@drawable/dashboard_challenge_progressbar"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp" />
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:text="W"
+                    android:textSize="20sp"
+                    android:textColor="#E9E9E9"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"/>
 
                 <TextView
                     android:id="@+id/bar_thu"
-                    android:layout_width="32dp"
-                    android:layout_height="15dp"
-                    android:background="@drawable/dashboard_challenge_progressbar"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp" />
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:text="T"
+                    android:textSize="20sp"
+                    android:textColor="#E9E9E9"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"/>
 
                 <TextView
                     android:id="@+id/bar_fri"
-                    android:layout_width="32dp"
-                    android:layout_height="15dp"
-                    android:background="@drawable/dashboard_challenge_progressbar"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp" />
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:text="F"
+                    android:textSize="20sp"
+                    android:textColor="#E9E9E9"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"/>
 
                 <TextView
                     android:id="@+id/bar_sat"
-                    android:layout_width="32dp"
-                    android:layout_height="15dp"
-                    android:background="@drawable/dashboard_challenge_progressbarend"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp" />
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:text="S"
+                    android:textSize="20sp"
+                    android:textColor="#E9E9E9"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"/>
 
             </LinearLayout>
 
