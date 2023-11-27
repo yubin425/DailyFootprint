@@ -30,10 +30,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     var googleLoginLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == -1) {
+
+        Log.d(TAG, "여긴가")
+        if (result.resultCode == RESULT_OK) {
             val data = result.data
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             getGoogleInfo(task)
+            Log.d(TAG, "여긴가2")
+        }
+        else{
+            Log.d(TAG, result.resultCode.toString())
         }
     }
     fun getGoogleInfo(completedTask: Task<GoogleSignInAccount>) {
@@ -94,10 +100,15 @@ class LoginActivity : AppCompatActivity() {
             .requestEmail()
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        Log.d(TAG, "googlesignin")
         auth = FirebaseAuth.getInstance()
 
+        Log.d(TAG, "firebaseauth")
         binding.loginviewGoogleButton.setOnClickListener {
             googleLogin()
+
+            Log.d(TAG, "엥?")
         }
     }
 }

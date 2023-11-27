@@ -45,6 +45,7 @@ class SplashActivity : AppCompatActivity() {
 
         val currentUser = FirebaseManager.getFirebaseAuthInstance().currentUser
 
+        Log.d("MyApp", "이것은 디버그 메시지 1")
         if (currentUser != null) {
             // 이미 로그인한 사용자인 경우
             val uid = currentUser.uid
