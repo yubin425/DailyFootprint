@@ -15,15 +15,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
+import com.example.dailyfootprint.ui.challenge.ChallengeActivity
 import com.example.dailyfootprint.databinding.FragmentDashboardBinding
 import com.example.dailyfootprint.databinding.ActivityChallengeviewBinding
 
@@ -76,12 +71,12 @@ class MyAdapter() :
         // - replace the contents of the view with that element
 
         //holder.challengeTitle.setText("제목입니다")
-        holder.location.setText("위치입니다")
-        holder.numOfChallenge.setText("달성 목표 수입니다")
+        //holder.location.setText("위치입니다")
+        //holder.numOfChallenge.setText("달성 목표 수입니다")
 
         val challenge = challengeList[position]
         holder.challengeTitle.text = challenge.challengeName
-        //holder.location.text = challenge.location
+        holder.location.text = challenge.location
         holder.numOfChallenge.text = "목표: ${challenge.goal}"
 
         //val drawable = (GradientDrawable) ContextCompat.getDrawable(this, R.drawable.dashboard_challenge_progressbarstart)
@@ -99,6 +94,20 @@ class MyAdapter() :
         Log.d("MyAdapter", "position: $position")
         Log.d("MyAdapter", "dayColors: $dayColors")
 
+        fun getDayViewId(day: Int): Int {
+            return when (day) {
+                0 -> R.id.bar_sun
+                1 -> R.id.bar_mon
+                2 -> R.id.bar_tue
+                3 -> R.id.bar_wed
+                4 -> R.id.bar_thu
+                5 -> R.id.bar_fri
+                6 -> R.id.bar_sat
+                else -> R.id.bar_sun
+            }
+        }
+
+        val today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1
         for ((dayViewId, success) in dayColors) {
             val dayView: TextView = progressView.findViewById(dayViewId)
             if (success == 1) {
@@ -124,16 +133,20 @@ class MyAdapter() :
                 }
                  */
                 dayView?.setTextColor(Color.parseColor("#52B449"))
+            } else if (today > 0 && dayViewId == getDayViewId(today - 1) && success == 0) {
+                // 지난 요일에 대해서 successTime이 0이면 빨간색으로 표시
+                dayView?.setTextColor(Color.RED)
             }
         }
 
         // 팝업 창
         holder.delChallBtn.setOnClickListener {
             val context = holder.itemView.context
-            val intent = Intent(context, ChallengeActivity::class.java)
+            val intent = Intent(context, ChallengeviewActivity::class.java)
             intent.putExtra("challengeCode", challengeList[position].challengeCode)
             context.startActivity(intent)
         }
+
     }
 
 
@@ -142,6 +155,22 @@ class MyAdapter() :
             "https://dailyfootprint-aeac7-default-rtdb.asia-southeast1.firebasedatabase.app/"
         val database = Firebase.database(firebaseDatabaseUrl)
         val challRef = database.reference.child("challenges")
+
+        /*
+        val challenge = Challenge(
+            challengeCode = "751ab369-9df3-4fef-8cad-9951f86uck0c",
+            challengeName = "Challenge Name2",
+            challengeOwner = "7jkumBBvTiftMfhGsknsNVBrLpx2",
+            location = "",
+            position = arrayListOf(37.7749F, -122.4194F),
+            goal = 30,
+            successTime = arrayListOf(0, 0, 0, 1, 0, 0, 0)
+        )
+
+
+        challRef.child("751ab369-9df3-4fef-8cad-9951f86uck0c").setValue(challenge)
+
+         */
 
 
         val challOwner = challRef.child("challengeOwner").toString()
@@ -303,13 +332,15 @@ class DashboardFragment : Fragment() {
         val cleanupScheduler = WeeklyCleanupScheduler(requireContext())
         cleanupScheduler.scheduleWeeklyCleanup()
 
-        /*   챌린지 추가 버튼 클릭 시, 챌린지 추가 화면으로 이동
-        val challAddBtn: Button = view.findViewById(R.id.addchallnege_btn)
-        challAddBtn.setOnClickListener {
-            val addChalFragment
-            openFragment()
+
+        val challAddBtn: Button? = _binding?.root?.findViewById(R.id.addchall_btn)
+        challAddBtn?.setOnClickListener {
+            val context = view?.context
+            val intent = Intent(context, ChallengeActivity::class.java)
+            context?.startActivity(intent)
+            Log.d("ChallAddBtnClick", "Challenge Activity Button Clicked!")
         }
-        */
+
 
         return root
     }

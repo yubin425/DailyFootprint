@@ -53,6 +53,7 @@ val exampleChallenge = Challenge(
     challengeCode = "CH001",
     challengeName = "테스트", // home에서 사용
     challengeOwner = "Alice",
+    location = "",
     position = arrayListOf(37.7749F, -122.4194F), // home에서 사용
     goal = 42, // 마라톤의 길이 (킬로미터)
     successTime = arrayListOf(0, 0, 0, 0, 0, 0, 0) // 주중에만 도전 (예: 수요일부터 일요일까지)
@@ -90,9 +91,10 @@ fun addChallengeToFirebase() {
 
     // Create a Challenge object
     val exampleChallenge = Challenge(
-        challengeCode = UUID.randomUUID().toString(),
+        challengeCode = "",
         challengeName = "얘는 제목",
         challengeOwner = FirebaseManager.getUID(),
+        location = "",
         position = arrayListOf(37.7749F, -122.4194F),
         goal = 42,
         successTime = arrayListOf(0, 0, 0, 0, 0, 0, 0)

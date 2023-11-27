@@ -15,6 +15,7 @@ import com.example.dailyfootprint.ui.Map.MapsActivity
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.database.*
+import java.util.UUID
 
 class ChallengeActivity : AppCompatActivity() {
 
@@ -81,20 +82,41 @@ class ChallengeActivity : AppCompatActivity() {
         binding.challengeviewAddButton.isEnabled = isAddButtonEnabled
     }
 
+
+
     private fun saveValues() {
         val challengeName = binding.challengeviewNameEdittext.text.toString()
         val locationValue = binding.challengeviewLocationEdittext.text.toString()
         val spinnerValue = binding.challengeviewSelectSpinner.selectedItem.toString()
 
+        fun convertStringToInt(spinnerValue: String): Int {
+            return when (spinnerValue) {
+                "주 1일" -> 1
+                "주 2일" -> 2
+                "주 3일" -> 3
+                "주 4일" -> 4
+                "주 5일" -> 5
+                "주 6일" -> 6
+                "주 7일" -> 7
+
+                else ->0
+            }
+        }
+        val intSpinnerValue = convertStringToInt(spinnerValue)
+
+        //val challengeKey = databaseReference.child("challenges").push().key
         if (challengeName.isNotEmpty()) {
             val newChallenge = Challenge(
+                challengeCode = UUID.randomUUID().toString(),
                 challengeName = challengeName,
-                challengeLocation = locationValue,
-                goal = spinnerValue
+                challengeOwner = FirebaseManager.getUID(),
+                location = locationValue,
+                position = arrayListOf(37.7749F, -122.4194F),     // <-- 실제 좌표값 넣도록 수정해야 함
+                goal = convertStringToInt(spinnerValue),
+                successTime = arrayListOf(0, 0, 0, 0, 0, 0, 0)
             )
             val challengeRef = databaseReference.child("challenges")
-            val challengeKey = databaseReference.child("challenges").push().key
-            challengeRef.child(challengeKey!!).setValue(newChallenge)
+            challengeRef.child(newChallenge.challengeCode).setValue(newChallenge)
             finish()
         } else {
             showToast("챌린지 이름을 입력해주세요.")

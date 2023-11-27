@@ -24,7 +24,7 @@
             android:paddingTop="15dp">
 
             <Button
-                android:id="@+id/addchallnege_btn"
+                android:id="@+id/addchall_btn"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="0dp"

@@ -15,7 +15,7 @@ import com.example.dailyfootprint.databinding.FragmentDashboardBinding
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 
-class ChallengeActivity : AppCompatActivity() {
+class ChallengeviewActivity : AppCompatActivity() {
     private lateinit var binding: FragmentDashboardBinding
     val firebaseDatabaseUrl =
         "https://dailyfootprint-aeac7-default-rtdb.asia-southeast1.firebasedatabase.app/"
