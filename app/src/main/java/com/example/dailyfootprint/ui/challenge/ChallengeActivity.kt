@@ -24,7 +24,10 @@ class ChallengeActivity : AppCompatActivity() {
     private lateinit var placesClient: PlacesClient
     private lateinit var locationEditText: EditText
     private lateinit var challenge: Challenge
+    private lateinit var latitude: String
+    private lateinit var longitude: String
     private val TAG = "ChallengeActivity"
+    private val MAX_NAME_LENGTH = 30
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +39,7 @@ class ChallengeActivity : AppCompatActivity() {
         // 초기화
         databaseReference = FirebaseDatabase.getInstance().reference
 
+        // 수행 주기
         val spinnerAdapter = ArrayAdapter.createFromResource(
             this,
             R.array.periods,
@@ -49,25 +53,34 @@ class ChallengeActivity : AppCompatActivity() {
         }
         placesClient = Places.createClient(this)
 
+        // MapsActivity.kt에서 위치 정보 전달 받음
         locationEditText = findViewById(R.id.challengeview_location_edittext)
         binding.challengeviewSearchButton.setOnClickListener {
             finish()
             val intent = Intent(this@ChallengeActivity, MapsActivity::class.java)
             startActivity(intent)
         }
+        latitude = intent.getStringExtra("latitude").toString()
+        longitude = intent.getStringExtra("longitude").toString()
         val name = intent.getStringExtra("name")
         locationEditText.setText(name)
 
-        binding.challengeviewNameEdittext.addTextChangedListener {
+        // 챌린지 이름의 EditText를 확인
+        val challengeNameEditText = binding.challengeviewNameEdittext
+        challengeNameEditText.addTextChangedListener() {
             updateAddButtonState()
         }
-        binding.challengeviewLocationEdittext.addTextChangedListener {
-            updateAddButtonState()
-        }
+
+        // 새로 작성 완료한 챌린지를 추가하기
+        binding.challengeviewAddButton.isEnabled = true
         binding.challengeviewAddButton.setOnClickListener {
-            saveValues()
+            if (validateInputs()) {
+                saveValues()
+            }
             Log.d(TAG, "ADD BUTTON CLICKED.")
         }
+
+        // 챌린지 추가하는 것을 취소하고 이전 뷰로 되돌아가기
         binding.challengeviewCancelButton.setOnClickListener {
             finish()
             Log.d(TAG, "CANCEL BUTTON CLICKED.")
@@ -76,10 +89,36 @@ class ChallengeActivity : AppCompatActivity() {
 
     private fun updateAddButtonState() {
         val challengeName = binding.challengeviewNameEdittext.text.toString()
+
+        val isNameValid = challengeName.length <= MAX_NAME_LENGTH
+        binding.challengeviewAddButton.isEnabled = isNameValid
+
+        if (!isNameValid) {
+            binding.challengeviewNameEdittext.error = "챌린지 이름은 $MAX_NAME_LENGTH 자 이하로 입력하세요."
+        }
+    }
+
+    private fun validateInputs(): Boolean {
+        val challengeName = binding.challengeviewNameEdittext.text.toString()
         val location = binding.challengeviewLocationEdittext.text.toString()
 
-        val isAddButtonEnabled = challengeName.isNotEmpty() && location.isNotEmpty()
-        binding.challengeviewAddButton.isEnabled = isAddButtonEnabled
+        if (challengeName.isEmpty() && location.isEmpty()) {
+            binding.challengeviewNameEdittext.error = "이름을 입력해주세요."
+            binding.challengeviewLocationEdittext.error = "위치를 입력해주세요."
+            Toast.makeText(this, "이름과 위치를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        if (challengeName.isEmpty()) {
+            binding.challengeviewNameEdittext.error = "이름을 입력해주세요."
+            Toast.makeText(this, "이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        if (location.isEmpty()) {
+            binding.challengeviewLocationEdittext.error = "위치를 입력해주세요."
+            Toast.makeText(this, "위치를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
     }
 
 
@@ -89,6 +128,8 @@ class ChallengeActivity : AppCompatActivity() {
         val locationValue = binding.challengeviewLocationEdittext.text.toString()
         val spinnerValue = binding.challengeviewSelectSpinner.selectedItem.toString()
 
+
+        // String을 Int로 변환
         fun convertStringToInt(spinnerValue: String): Int {
             return when (spinnerValue) {
                 "주 1일" -> 1
@@ -104,26 +145,20 @@ class ChallengeActivity : AppCompatActivity() {
         }
         val intSpinnerValue = convertStringToInt(spinnerValue)
 
-        //val challengeKey = databaseReference.child("challenges").push().key
-        if (challengeName.isNotEmpty()) {
-            val newChallenge = Challenge(
-                challengeCode = UUID.randomUUID().toString(),
-                challengeName = challengeName,
-                challengeOwner = FirebaseManager.getUID(),
-                location = locationValue,
-                position = arrayListOf(37.7749F, -122.4194F),     // <-- 실제 좌표값 넣도록 수정해야 함
-                goal = convertStringToInt(spinnerValue),
-                successTime = arrayListOf(0, 0, 0, 0, 0, 0, 0)
-            )
-            val challengeRef = databaseReference.child("challenges")
-            challengeRef.child(newChallenge.challengeCode).setValue(newChallenge)
-            finish()
-        } else {
-            showToast("챌린지 이름을 입력해주세요.")
-        }
-    }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
+        // 정보를 challenge에 저장
+        val newChallenge = Challenge(
+            challengeCode = UUID.randomUUID().toString(),
+            challengeName = challengeName,
+            challengeOwner = FirebaseManager.getUID(),
+            location = locationValue,
+            position = arrayListOf(latitude.toFloat(), longitude.toFloat()),
+            goal = convertStringToInt(spinnerValue),
+            successTime = arrayListOf(0, 0, 0,  0, 0, 0, 0)
+        )
+        val challengeRef = databaseReference.child("challenges")
+        challengeRef.child(newChallenge.challengeCode).setValue(newChallenge)
+        finish()
     }
 }

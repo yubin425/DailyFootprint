@@ -16,3 +16,4 @@ data class Challenge(
 ): Serializable {
     constructor() : this("", "", "","", arrayListOf(0.0F, 0.0F), 0, arrayListOf(0, 0, 0, 0, 0, 0, 0))
 }
+

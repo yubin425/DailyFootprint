@@ -105,6 +105,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     )
                 }
                 val locationName = place.name.toString()
+                val locationLat = selectedLocation.latitude.toString()
+                val locationLng = selectedLocation.longitude.toString()
 
                 // 추가: Log를 사용하여 디버깅 메시지 출력
                 Log.d(TAG, "onPlaceSelected called. Place: ${locationName}, LatLng: $selectedLocation")
@@ -115,6 +117,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     // 버튼 클릭 시, AnotherActivity로 이동하면서 위치 정보 전달
                     val intent = Intent(this@MapsActivity, ChallengeActivity::class.java)
                     intent.putExtra("name", locationName)
+                    intent.putExtra("latitude", locationLat)
+                    intent.putExtra("longitude", locationLng)
                     startActivity(intent)
                     finish()
 
