@@ -27,6 +27,7 @@ class ChallengeActivity : AppCompatActivity() {
     private lateinit var latitude: String
     private lateinit var longitude: String
     private val TAG = "ChallengeActivity"
+    private val MAX_NAME_LENGTH = 30
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +65,12 @@ class ChallengeActivity : AppCompatActivity() {
         val name = intent.getStringExtra("name")
         locationEditText.setText(name)
 
+        // 챌린지 이름의 EditText를 확인
+        val challengeNameEditText = binding.challengeviewNameEdittext
+        challengeNameEditText.addTextChangedListener() {
+            updateAddButtonState()
+        }
+
         // 새로 작성 완료한 챌린지를 추가하기
         binding.challengeviewAddButton.isEnabled = true
         binding.challengeviewAddButton.setOnClickListener {
@@ -80,20 +87,34 @@ class ChallengeActivity : AppCompatActivity() {
         }
     }
 
-    // Edittext를 확인
+    private fun updateAddButtonState() {
+        val challengeName = binding.challengeviewNameEdittext.text.toString()
+
+        val isNameValid = challengeName.length <= MAX_NAME_LENGTH
+        binding.challengeviewAddButton.isEnabled = isNameValid
+
+        if (!isNameValid) {
+            binding.challengeviewNameEdittext.error = "챌린지 이름은 $MAX_NAME_LENGTH 자 이하로 입력하세요."
+        }
+    }
+
     private fun validateInputs(): Boolean {
         val challengeName = binding.challengeviewNameEdittext.text.toString()
         val location = binding.challengeviewLocationEdittext.text.toString()
 
         if (challengeName.isEmpty() && location.isEmpty()) {
+            binding.challengeviewNameEdittext.error = "이름을 입력해주세요."
+            binding.challengeviewLocationEdittext.error = "위치를 입력해주세요."
             Toast.makeText(this, "이름과 위치를 입력해주세요.", Toast.LENGTH_SHORT).show()
             return false
         }
         if (challengeName.isEmpty()) {
+            binding.challengeviewNameEdittext.error = "이름을 입력해주세요."
             Toast.makeText(this, "이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
             return false
         }
         if (location.isEmpty()) {
+            binding.challengeviewLocationEdittext.error = "위치를 입력해주세요."
             Toast.makeText(this, "위치를 입력해주세요.", Toast.LENGTH_SHORT).show()
             return false
         }
