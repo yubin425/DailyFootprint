@@ -39,9 +39,9 @@ class ChallengeviewActivity : AppCompatActivity() {
 
         val fragmentContainer = findViewById<ConstraintLayout>(R.id.fragment_container)
         if (fragmentContainer != null) {
-            Log.d("ChallengeActivity", "fragment_container found")
+            Log.d("ChallengeviewActivity", "fragment_container found")
         } else {
-            Log.e("ChallengeActivity", "fragment_container not found")
+            Log.e("ChallengeviewActivity", "fragment_container not found")
         }
 
         currentChallenge = intent.getStringExtra("challengeCode")
@@ -67,12 +67,12 @@ class ChallengeviewActivity : AppCompatActivity() {
         val okButton = mDialogView.findViewById<Button>(R.id.delete_grbtn)
         okButton.setOnClickListener {
             // ChallengeActivity의 멤버 변수로 설정된 currentChallenge를 사용
-       //   val delChallenge = currentChallenge
-            Log.d("ChallengeActivity", "Deleting Challenge: $currentChallenge")
+            //   val delChallenge = currentChallenge
+            Log.d("ChallengeviewActivity", "Deleting Challenge: $currentChallenge")
 
             if (currentChallenge != null) {
                 // 파이어베이스에서 챌린지 삭제
-               //al challengeRef = challRef.child(delChallenge)
+                //al challengeRef = challRef.child(delChallenge)
                 challRef.child(currentChallenge!!).removeValue()
 
                 Toast.makeText(this, "챌린지가 삭제되었습니다", Toast.LENGTH_SHORT).show()
@@ -81,15 +81,15 @@ class ChallengeviewActivity : AppCompatActivity() {
             mAlertDialog.dismiss()
             finish()
 
-                /*
-                fragmentTransaction.replace(
-                    R.id.fragment_container,
-                    DashboardFragment()
-                )
-                fragmentTransaction.commit()
+            /*
+            fragmentTransaction.replace(
+                R.id.fragment_container,
+                DashboardFragment()
+            )
+            fragmentTransaction.commit()
 
-            addDashboardFragment(fragmentTransaction)
-                 */
+        addDashboardFragment(fragmentTransaction)
+             */
 
         }
 
@@ -98,13 +98,13 @@ class ChallengeviewActivity : AppCompatActivity() {
             mAlertDialog.dismiss()
             finish()
 
-/*
-            fragmentTransaction.replace(
-                R.id.fragment_container,
-                DashboardFragment()
-            )
-            fragmentTransaction.commit()
-*/
+            /*
+                        fragmentTransaction.replace(
+                            R.id.fragment_container,
+                            DashboardFragment()
+                        )
+                        fragmentTransaction.commit()
+            */
         }
 
 

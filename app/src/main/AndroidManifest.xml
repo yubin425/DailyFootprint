@@ -82,7 +82,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".ui.dashboard.ChallengeActivity"
+            android:name=".ui.dashboard.ChallengeviewActivity"
             android:exported="false" />
 
         <activity

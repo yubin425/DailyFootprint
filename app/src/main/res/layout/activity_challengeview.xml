@@ -137,18 +137,6 @@
 
 
                 <TextView
-                    android:id="@+id/bar_sun"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:text="S"
-                    android:textSize="20sp"
-                    android:textColor="#E9E9E9"
-                    android:textStyle="bold"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:gravity="center"/>
-
-                <TextView
                     android:id="@+id/bar_mon"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
@@ -210,6 +198,19 @@
 
                 <TextView
                     android:id="@+id/bar_sat"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:text="S"
+                    android:textSize="20sp"
+                    android:textColor="#E9E9E9"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"/>
+
+
+                <TextView
+                    android:id="@+id/bar_sun"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:text="S"

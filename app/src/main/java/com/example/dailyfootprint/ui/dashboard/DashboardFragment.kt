@@ -82,28 +82,28 @@ class MyAdapter() :
         //val drawable = (GradientDrawable) ContextCompat.getDrawable(this, R.drawable.dashboard_challenge_progressbarstart)
         val progressView = holder.itemView as ViewGroup
         val dayColors = mapOf(
-            R.id.bar_sun to challengeList[position].successTime[0],
-            R.id.bar_mon to challengeList[position].successTime[1],
-            R.id.bar_tue to challengeList[position].successTime[2],
-            R.id.bar_wed to challengeList[position].successTime[3],
-            R.id.bar_thu to challengeList[position].successTime[4],
-            R.id.bar_fri to challengeList[position].successTime[5],
-            R.id.bar_sat to challengeList[position].successTime[6]
+            R.id.bar_mon to challengeList[position].successTime[0],
+            R.id.bar_tue to challengeList[position].successTime[1],
+            R.id.bar_wed to challengeList[position].successTime[2],
+            R.id.bar_thu to challengeList[position].successTime[3],
+            R.id.bar_fri to challengeList[position].successTime[4],
+            R.id.bar_sat to challengeList[position].successTime[5],
+            R.id.bar_sun to challengeList[position].successTime[6],
         )
 
         Log.d("MyAdapter", "position: $position")
         Log.d("MyAdapter", "dayColors: $dayColors")
 
-        fun getDayViewId(day: Int): Int {
-            return when (day) {
-                0 -> R.id.bar_sun
-                1 -> R.id.bar_mon
-                2 -> R.id.bar_tue
-                3 -> R.id.bar_wed
-                4 -> R.id.bar_thu
-                5 -> R.id.bar_fri
-                6 -> R.id.bar_sat
-                else -> R.id.bar_sun
+        fun getDayViewInt(day: TextView): Int {
+            return when (day.id) {
+                R.id.bar_mon -> 0
+                R.id.bar_tue -> 1
+                R.id.bar_wed -> 2
+                R.id.bar_thu -> 3
+                R.id.bar_fri -> 4
+                R.id.bar_sat -> 5
+                R.id.bar_sun -> 6
+                else -> 0
             }
         }
 
@@ -133,7 +133,7 @@ class MyAdapter() :
                 }
                  */
                 dayView?.setTextColor(Color.parseColor("#52B449"))
-            } else if (today > 0 && dayViewId == getDayViewId(today - 1) && success == 0) {
+            } else if (today > 0 && getDayViewInt(dayView) < (today - 1) && success == 0) {
                 // 지난 요일에 대해서 successTime이 0이면 빨간색으로 표시
                 dayView?.setTextColor(Color.RED)
             }
@@ -179,36 +179,36 @@ class MyAdapter() :
         Log.d("MyAdapter", "Challenge Owner: ${challOwner}")
         Log.d("MyAdapter", "User ID: $userId")
         //if (userId == challOwner) {
-            challRef.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    challengeList.clear()
+        challRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                challengeList.clear()
 
-                    for (challengeSnapshot in dataSnapshot.children) {
-                        val challenge = challengeSnapshot.getValue(Challenge::class.java)
-                        challenge?.let {
-                            // challengeOwner 값 가져오기
-                            val challengeOwner = challengeSnapshot.child("challengeOwner").getValue(String::class.java)
+                for (challengeSnapshot in dataSnapshot.children) {
+                    val challenge = challengeSnapshot.getValue(Challenge::class.java)
+                    challenge?.let {
+                        // challengeOwner 값 가져오기
+                        val challengeOwner = challengeSnapshot.child("challengeOwner").getValue(String::class.java)
 
-                            // 현재 사용자와 challengeOwner가 같은 경우만 리스트에 추가
-                            if (userId == challengeOwner) {
-                                challengeList.add(it)
-                            }
+                        // 현재 사용자와 challengeOwner가 같은 경우만 리스트에 추가
+                        if (userId == challengeOwner) {
+                            challengeList.add(it)
                         }
                     }
-
-                    //updateDayColors()
-                    notifyDataSetChanged()
-
                 }
 
-                override fun onCancelled(databaseError: DatabaseError) {
-                    Log.e("Firebase", "데이터 가져오기 실패: ${databaseError.toException()}")
-                }
-            })
+                //updateDayColors()
+                notifyDataSetChanged()
 
-            // updateDayColors 함수 추가
+            }
 
-        }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("Firebase", "데이터 가져오기 실패: ${databaseError.toException()}")
+            }
+        })
+
+        // updateDayColors 함수 추가
+
+    }
     //}
 
     fun initialize() {
@@ -263,34 +263,34 @@ class WeeklyCleanupScheduler(private val context: Context) {
             PendingIntent.FLAG_IMMUTABLE)
 
         // 다음 토요일 23시 59분 59초 계산
-        val nextSaturday = getNextSaturday()
+        val nextSunday = getNextSunday()
 
         // 주기적으로 알람 설정 (주간마다)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmMgr.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                nextSaturday.timeInMillis,
+                nextSunday.timeInMillis,
                 pendingIntent
             )
         } else {
             alarmMgr.setExact(
                 AlarmManager.RTC_WAKEUP,
-                nextSaturday.timeInMillis,
+                nextSunday.timeInMillis,
                 pendingIntent
             )
         }
     }
 
-    private fun getNextSaturday(): Calendar {
+    private fun getNextSunday(): Calendar {
         val calendar = Calendar.getInstance()
         val currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-        val daysUntilSaturday = (Calendar.SATURDAY - currentDayOfWeek + 7) % 7
+        val daysUntilSunday = (Calendar.SUNDAY - currentDayOfWeek + 7) % 7
         val nextSaturday = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
             set(Calendar.HOUR_OF_DAY, 23)
             set(Calendar.MINUTE, 59)
             set(Calendar.SECOND, 59)
-            add(Calendar.DAY_OF_WEEK, daysUntilSaturday)
+            add(Calendar.DAY_OF_WEEK, daysUntilSunday)
         }
         return nextSaturday
     }
@@ -325,7 +325,7 @@ class DashboardFragment : Fragment() {
 
         val recyclerView: RecyclerView = binding.recyclerviewMain
         recyclerView.apply {
-          layoutManager = viewManager
+            layoutManager = viewManager
             adapter = viewAdapter
         }
 
