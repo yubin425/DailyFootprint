@@ -64,40 +64,47 @@ class ChallengeActivity : AppCompatActivity() {
         val name = intent.getStringExtra("name")
         locationEditText.setText(name)
 
-        // EditText를 확인
-        binding.challengeviewNameEdittext.addTextChangedListener {
-            updateAddButtonState()
-        }
-        binding.challengeviewLocationEdittext.addTextChangedListener {
-            updateAddButtonState()
-        }
         // 새로 작성 완료한 챌린지를 추가하기
+        binding.challengeviewAddButton.isEnabled = true
         binding.challengeviewAddButton.setOnClickListener {
-            saveValues()
+            if (validateInputs()) {
+                saveValues()
+            }
             Log.d(TAG, "ADD BUTTON CLICKED.")
         }
-        // 챌린지 추가 취소하고 이전 뷰로 되돌아가기
+
+        // 챌린지 추가하는 것을 취소하고 이전 뷰로 되돌아가기
         binding.challengeviewCancelButton.setOnClickListener {
             finish()
             Log.d(TAG, "CANCEL BUTTON CLICKED.")
         }
     }
 
-    private fun updateAddButtonState() {
+    // Edittext를 확인
+    private fun validateInputs(): Boolean {
         val challengeName = binding.challengeviewNameEdittext.text.toString()
         val location = binding.challengeviewLocationEdittext.text.toString()
 
-        if (challengeName.isEmpty()) {
-            Toast.makeText(this, "입력칸을 채워주세요.", Toast.LENGTH_SHORT).show()
+        if (challengeName.isEmpty() && location.isEmpty()) {
+            Toast.makeText(this, "이름과 위치를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return false
         }
-        val isAddButtonEnabled = challengeName.isNotEmpty() && location.isNotEmpty()
-        binding.challengeviewAddButton.isEnabled = isAddButtonEnabled
+        if (challengeName.isEmpty()) {
+            Toast.makeText(this, "이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        if (location.isEmpty()) {
+            Toast.makeText(this, "위치를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
     }
 
     private fun saveValues() {
         val challengeName = binding.challengeviewNameEdittext.text.toString()
         val locationValue = binding.challengeviewLocationEdittext.text.toString()
         val spinnerValue = binding.challengeviewSelectSpinner.selectedItem.toString()
+
         // String을 Int로 변환
         fun convertStringToInt(spinnerValue: String): Int {
             return when (spinnerValue) {
@@ -109,25 +116,22 @@ class ChallengeActivity : AppCompatActivity() {
                 "주 6일" -> 6
                 "주 7일" -> 7
 
-                else ->0
+                else -> 0
             }
         }
+
         // 정보를 challenge에 저장
-        if (challengeName.isNotEmpty()) {
-            val newChallenge = Challenge(
-                challengeCode = UUID.randomUUID().toString(),
-                challengeName = challengeName,
-                challengeOwner = FirebaseManager.getUID(),
-                location = locationValue,
-                position = arrayListOf(latitude.toFloat(), longitude.toFloat()),
-                goal = convertStringToInt(spinnerValue),
-                successTime = arrayListOf(0, 0, 0,  0, 0, 0, 0)
-            )
-            val challengeRef = databaseReference.child("challenges")
-            challengeRef.child(newChallenge.challengeCode).setValue(newChallenge)
-            finish()
-        } else {
-            Toast.makeText(this, "챌린지 이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
-        }
+        val newChallenge = Challenge(
+            challengeCode = UUID.randomUUID().toString(),
+            challengeName = challengeName,
+            challengeOwner = FirebaseManager.getUID(),
+            location = locationValue,
+            position = arrayListOf(latitude.toFloat(), longitude.toFloat()),
+            goal = convertStringToInt(spinnerValue),
+            successTime = arrayListOf(0, 0, 0,  0, 0, 0, 0)
+        )
+        val challengeRef = databaseReference.child("challenges")
+        challengeRef.child(newChallenge.challengeCode).setValue(newChallenge)
+        finish()
     }
 }
