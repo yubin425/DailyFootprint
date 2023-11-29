@@ -169,9 +169,9 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
                         myButton.isEnabled = button_value
                         // 20미터 이내인 경우의 로직
                         // 디버그 코드 (현재 위치 출력)
-                        Toast.makeText( myButton.context, binding.textTitle.text.toString()+" "+myButton.text.toString() + " 버튼이 클릭:true", Toast.LENGTH_SHORT).show()
+                        // Toast.makeText( myButton.context, binding.textTitle.text.toString()+" "+myButton.text.toString() + " 버튼이 클릭:true", Toast.LENGTH_SHORT).show()
                         // 배포용 코드
-                        // Toast.makeText( myButton.context, " 오늘도 수고하셨어요~ 남은 하루도 파이팅! ", Toast.LENGTH_SHORT).show()
+                        Toast.makeText( myButton.context, " 오늘도 수고하셨어요~ 남은 하루도 파이팅! ", Toast.LENGTH_SHORT).show()
 
                         val database = FirebaseDatabase.getInstance()
                         val challengesRef: DatabaseReference = database.getReference("challenges")
@@ -194,9 +194,9 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
                     } else {
                         // 20미터 밖인 경우의 로직
                         // 디버그 코드 (현재 위치 출력)
-                        Toast.makeText( myButton.context,latitude.toString() + ", " + longitude, Toast.LENGTH_SHORT).show()
+                        // Toast.makeText( myButton.context,latitude.toString() + ", " + longitude, Toast.LENGTH_SHORT).show()
                         // 배포용 코드
-//                        Toast.makeText( myButton.context,"현재 위치가 올바르지 않습니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText( myButton.context,"현재 위치가 올바르지 않습니다.", Toast.LENGTH_SHORT).show()
                     }
                 }
 
