@@ -127,7 +127,7 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
         }
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position) // `getItem` 메서드를 사용하여 현재 위치의 항목을 가져옵니다.
+        val item = getItem(position) // `getItem` 메서드를 사용
         holder.bind(item)
     }
 
@@ -140,7 +140,7 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
             val myButton: Button = binding.certifiyButton
             var button_value = false
 
-            // 현재 날짜 및 시간을 가져옵니다.
+            // 현재 날짜 및 시간
 
             if(1==item.successTime[DateUtils.getAdjustedDayOfWeek()]){
                 myButton.background= ContextCompat.getDrawable(myButton.context, R.drawable.round_gray_button)
@@ -149,30 +149,25 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
             }
 
             if(!button_value){
-            myButton.setOnClickListener {
-                // 여기에 버튼 클릭시 수행할 작업을 넣습니다.
-
-                 // true 면 버튼확인을 안함
-                 // isEnabled는 false -> 비활성화
-
+                myButton.setOnClickListener {
 
                     val locationChecker = LocationChecker(myButton.context)
 
                     val (latitude, longitude) = item.position
-//                    val (latitude, longitude) = Pair(37.4219983, -122.084) // 현재위치 뉴욕
                     val latitudeDouble = latitude.toDouble()
                     val longitudeDouble = longitude.toDouble()
                     var isNearby = locationChecker.isWithin20mOfTarget(latitudeDouble, longitudeDouble)
 
-                    //test
-                    isNearby = true
+                    //test code
+                    //var isNearby = true // 가까운지 확인하는 코드
 
                     if (isNearby) {
                         myButton.isEnabled = button_value
                         // 20미터 이내인 경우의 로직
+                        // 디버그 코드 (현재 위치 출력)
                         Toast.makeText( myButton.context, binding.textTitle.text.toString()+" "+myButton.text.toString() + " 버튼이 클릭:true", Toast.LENGTH_SHORT).show()
-//                        myButton.background= ContextCompat.getDrawable(myButton.context, R.drawable.round_gray_button)
-
+                        // 배포용 코드
+                        // Toast.makeText( myButton.context, " 오늘도 수고하셨어요~ 남은 하루도 파이팅! ", Toast.LENGTH_SHORT).show()
 
                         val database = FirebaseDatabase.getInstance()
                         val challengesRef: DatabaseReference = database.getReference("challenges")
@@ -190,11 +185,14 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
 
 
 
-                        //인증후 서버에 업데이트 -> 반영되면 그걸로 다시 판단하게 되있음
+                        //인증후 서버에 업데이트 -> 반영되면 그걸로 다시 판단
                         button_value = true
                     } else {
                         // 20미터 밖인 경우의 로직
+                        // 디버그 코드 (현재 위치 출력)
                         Toast.makeText( myButton.context,latitude.toString() + ", " + longitude, Toast.LENGTH_SHORT).show()
+                        // 배포용 코드
+//                        Toast.makeText( myButton.context,"현재 위치가 올바르지 않습니다.", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -284,7 +282,6 @@ class HomeFragment : Fragment() {
                     // 어댑터에 데이터 업데이트
                     datachalllist = newlist
                     adapter.submitList(newlist)
-//            Log.d("FirebaseData", "Loaded data: ${newlist.size} items")
                     adapter.notifyDataSetChanged()
 
                     // cheerview
@@ -320,11 +317,9 @@ class HomeFragment : Fragment() {
             intscore > 99 -> cheertext = "\uD83D\uDE0D 이번주의 챌린지를 전부 달성했어요!"
             intscore in 80..99 -> cheertext = "\uD83D\uDE31 거의 다 왔어요. 조금만 힘내요!"
             intscore in 50 until 80 -> cheertext = "\uD83E\uDD79 반이나 했어요. 정말 대단해요!"
-//            intscore in 30 until 50 -> cheertext = "반까지 얼마 안남았어요"
             intscore > 0 && intscore < 50 -> cheertext = "\uD83E\uDD73  시작이 반이래요!"
             intscore == 0 -> cheertext = "\uD83D\uDC4D 챌린지 달성에 도전해봐요!"
             else -> cheertext = "계산 에러가 났어요"
-            // 추가적으로 0이나 음수 등의 경우를 처리할 수도 있습니다.
         }
         cheercounttext = "$countMatching / $totalItemCount "
 
@@ -332,7 +327,6 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-//        challengesRef.removeEventListener(valueEventListener)
         _binding = null
     }
 }
@@ -381,4 +375,3 @@ class LocationChecker(private val context: Context) {
         return distanceInMeters <= 20
     }
 }
-
