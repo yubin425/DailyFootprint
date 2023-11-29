@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle" android:padding = "10dp">
+    <!-- 버튼 색깔 -->
+    <solid android:color="#2C6E49"
+        android:backgroundTint="#2C6E49"/>
+    <!-- 네 귀퉁이? 모양 -->
+    <corners
+        android:bottomLeftRadius="24dp"
+        android:bottomRightRadius="24dp"
+        android:topLeftRadius="24dp"
+        android:topRightRadius="24dp"/>
+</shape>

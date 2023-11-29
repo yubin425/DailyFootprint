@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.dailyfootprint"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -74,4 +74,6 @@ dependencies {
     //구글맵 권한
     implementation ("com.google.android.gms:play-services-maps:18.2.0")
     implementation ("com.google.android.libraries.places:places:3.2.0")
+
+    implementation ("androidx.cardview:cardview:1.0.0")
 }

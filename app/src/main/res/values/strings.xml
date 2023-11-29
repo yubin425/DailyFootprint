@@ -4,4 +4,5 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_friends">Friends</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="google_maps_api_key" translatable="false">AIzaSyC_XJNrBPpiRKSTnb9QnkSfcts6XOE0Leo</string>
 </resources>
