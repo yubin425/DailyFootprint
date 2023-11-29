@@ -153,7 +153,7 @@ class ChallengeActivity : AppCompatActivity() {
             challengeName = challengeName,
             challengeOwner = FirebaseManager.getUID(),
             location = locationValue,
-            position = arrayListOf(latitude.toFloat(), longitude.toFloat()),
+            position = arrayListOf(latitude.toDouble(), longitude.toDouble()),
             goal = convertStringToInt(spinnerValue),
             successTime = arrayListOf(0, 0, 0,  0, 0, 0, 0)
         )

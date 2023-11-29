@@ -2,7 +2,6 @@ package com.example.dailyfootprint.ui.home
 
 import FirebaseManager
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,6 +9,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
@@ -20,11 +20,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginBottom
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -45,16 +43,13 @@ import com.google.firebase.database.ValueEventListener
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import java.util.UUID
-
-
 
 val exampleChallenge = Challenge(
     challengeCode = "CH001",
     challengeName = "테스트", // home에서 사용
     challengeOwner = "Alice",
     location = "",
-    position = arrayListOf(37.7749F, -122.4194F), // home에서 사용
+    position = arrayListOf(37.7749, -122.4194), // home에서 사용
     goal = 42, // 마라톤의 길이 (킬로미터)
     successTime = arrayListOf(0, 0, 0, 0, 0, 0, 0) // 주중에만 도전 (예: 수요일부터 일요일까지)
 )
@@ -95,7 +90,7 @@ fun addChallengeToFirebase() {
         challengeName = "얘는 제목",
         challengeOwner = FirebaseManager.getUID(),
         location = "",
-        position = arrayListOf(37.7749F, -122.4194F),
+        position = arrayListOf(37.7749, -122.4194),
         goal = 42,
         successTime = arrayListOf(0, 0, 0, 0, 0, 0, 0)
     )
@@ -140,7 +135,7 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
 
         fun bind(item: Challenge) {
             binding.textTitle.text = item.challengeName
-
+            binding.textpos.text = item.location
             val myButton: Button = binding.certifiyButton
             var button_value = false
 
@@ -158,9 +153,9 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
                     val locationChecker = LocationChecker(myButton.context)
 
                     val (latitude, longitude) = item.position
-                    val latitudeDouble = latitude.toDouble()
-                    val longitudeDouble = longitude.toDouble()
-                    var isNearby = locationChecker.isWithin20mOfTarget(latitudeDouble, longitudeDouble)
+                    Log.d("pos", latitude.toString() + ", "+ longitude.toString())
+                    var isNearby = locationChecker.isWithin20mOfTarget(latitude, longitude)
+                    Log.d("isNearby",isNearby.toString())
 
                     //test code
                     //var isNearby = true // 가까운지 확인하는 코드
@@ -171,7 +166,7 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
                         // 디버그 코드 (현재 위치 출력)
                         Toast.makeText( myButton.context, binding.textTitle.text.toString()+" "+myButton.text.toString() + " 버튼이 클릭:true", Toast.LENGTH_SHORT).show()
                         // 배포용 코드
-                        // Toast.makeText( myButton.context, " 오늘도 수고하셨어요~ 남은 하루도 파이팅! ", Toast.LENGTH_SHORT).show()
+//                         Toast.makeText( myButton.context, " 오늘도 수고하셨어요~ 남은 하루도 파이팅! ", Toast.LENGTH_SHORT).show()
 
                         val database = FirebaseDatabase.getInstance()
                         val challengesRef: DatabaseReference = database.getReference("challenges")
@@ -361,7 +356,7 @@ class CustomDividerDecoration(context: Context) : RecyclerView.ItemDecoration() 
 
 class LocationChecker(private val context: Context) {
 
-    private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//    private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     fun isWithin20mOfTarget(targetLatitude: Double, targetLongitude: Double): Boolean {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -369,13 +364,32 @@ class LocationChecker(private val context: Context) {
             return false
         }
 
-        val currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: return false
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        val locationListener = object : LocationListener {
+            var latitude = 0.0
+            var longitude = 0.0
+            override fun onLocationChanged(location: Location) {
+                // 새로운 위치 데이터를 사용하여 latitude와 longitude 갱신
+                latitude = location.latitude
+                longitude = location.longitude
+
+                // 갱신된 위치 정보를 사용하는 로직 추가
+            }
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
+
+        val currentLocation = Location("").apply {
+            latitude = locationListener.latitude
+            longitude = locationListener.longitude
+        }
+        Log.d("currentLocation",currentLocation.toString())
         val targetLocation = Location("").apply {
             latitude = targetLatitude
             longitude = targetLongitude
         }
-
-        val distanceInMeters = currentLocation.distanceTo(targetLocation)
+        val distanceInMeters =targetLocation.distanceTo(currentLocation)
+        Log.d("distanceInMeters",distanceInMeters.toString())
         return distanceInMeters <= 20
     }
 }
