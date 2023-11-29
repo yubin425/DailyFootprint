@@ -37,7 +37,7 @@ class SignUpViewModel : ViewModel() {
 
     fun checkDuplicate(input : String) {
         // 버튼을 클릭하면 이 함수 실행됨
-        userDatabaseReference.orderByChild("name").equalTo(input)
+        userDatabaseReference.orderByChild("userName").equalTo(input)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.childrenCount.toInt() == 0) {
