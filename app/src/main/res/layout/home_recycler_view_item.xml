@@ -70,7 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="성동구 마조로  12길"
+                    android:text="임시메세지"
                     android:textColor="#000000"
                     android:textSize="14sp"
                     android:textStyle="bold" />

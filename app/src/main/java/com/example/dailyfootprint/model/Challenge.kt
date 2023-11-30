@@ -9,11 +9,11 @@ data class Challenge(
     val challengeName : String,
     val challengeOwner : String,
     val location : String,
-    val position: ArrayList<Float> = arrayListOf(0.0F, 0.0F),
+    val position: ArrayList<Double> = arrayListOf(0.0, 0.0),
     val goal : Int,
     val successTime: ArrayList<Int> = arrayListOf(0, 0, 0, 0, 0, 0, 0)
 
 ): Serializable {
-    constructor() : this("", "", "","", arrayListOf(0.0F, 0.0F), 0, arrayListOf(0, 0, 0, 0, 0, 0, 0))
+    constructor() : this("", "", "","", arrayListOf(0.0, 0.0), 0, arrayListOf(0, 0, 0, 0, 0, 0, 0))
 }
 

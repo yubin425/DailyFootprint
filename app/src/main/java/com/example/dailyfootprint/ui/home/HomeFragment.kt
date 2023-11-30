@@ -2,7 +2,7 @@ package com.example.dailyfootprint.ui.home
 
 import FirebaseManager
 import android.Manifest
-import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,6 +10,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.location.Location
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
@@ -20,11 +21,9 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -45,8 +44,6 @@ import com.google.firebase.database.ValueEventListener
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import java.util.UUID
-
 
 
 val exampleChallenge = Challenge(
@@ -54,7 +51,7 @@ val exampleChallenge = Challenge(
     challengeName = "테스트", // home에서 사용
     challengeOwner = "Alice",
     location = "",
-    position = arrayListOf(37.7749F, -122.4194F), // home에서 사용
+    position = arrayListOf(37.7749, -122.4194), // home에서 사용
     goal = 42, // 마라톤의 길이 (킬로미터)
     successTime = arrayListOf(0, 0, 0, 0, 0, 0, 0) // 주중에만 도전 (예: 수요일부터 일요일까지)
 )
@@ -95,7 +92,7 @@ fun addChallengeToFirebase() {
         challengeName = "얘는 제목",
         challengeOwner = FirebaseManager.getUID(),
         location = "",
-        position = arrayListOf(37.7749F, -122.4194F),
+        position = arrayListOf(37.7749, -122.4194),
         goal = 42,
         successTime = arrayListOf(0, 0, 0, 0, 0, 0, 0)
     )
@@ -140,38 +137,48 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
 
         fun bind(item: Challenge) {
             binding.textTitle.text = item.challengeName
-
+            binding.textpos.text = item.location
             val myButton: Button = binding.certifiyButton
-            var button_value = false
 
+            val locationChecker = LocationChecker(myButton.context)
             // 현재 날짜 및 시간
 
+            locationChecker.update()
             if(1==item.successTime[DateUtils.getAdjustedDayOfWeek()]){
-                myButton.background= ContextCompat.getDrawable(myButton.context, R.drawable.round_gray_button)
-                myButton.isEnabled = button_value
-                button_value = true
+                myButton.isEnabled = false
+            }
+            else{
+                myButton.isEnabled = true
             }
 
-            if(!button_value){
+            if(myButton.isEnabled == false){
+
+                myButton.background= ContextCompat.getDrawable(myButton.context, R.drawable.round_gray_button)
+            }
+            else{
+                myButton.background= ContextCompat.getDrawable(myButton.context, R.drawable.round_green_button)
+
+            }
+            if(myButton.isEnabled){
                 myButton.setOnClickListener {
 
-                    val locationChecker = LocationChecker(myButton.context)
 
                     val (latitude, longitude) = item.position
-                    val latitudeDouble = latitude.toDouble()
-                    val longitudeDouble = longitude.toDouble()
-                    var isNearby = locationChecker.isWithin20mOfTarget(latitudeDouble, longitudeDouble)
+                    Log.d("pos", latitude.toString() + ", "+ longitude.toString())
+                    locationChecker.isWithin20mOfTarget(latitude, longitude) { isNearby ->
+                        Log.d("isNearby", isNearby.toString())
+
 
                     //test code
                     //var isNearby = true // 가까운지 확인하는 코드
 
                     if (isNearby) {
-                        myButton.isEnabled = button_value
+                        myButton.isEnabled = false
                         // 20미터 이내인 경우의 로직
                         // 디버그 코드 (현재 위치 출력)
                         // Toast.makeText( myButton.context, binding.textTitle.text.toString()+" "+myButton.text.toString() + " 버튼이 클릭:true", Toast.LENGTH_SHORT).show()
                         // 배포용 코드
-                        Toast.makeText( myButton.context, " 오늘도 수고하셨어요~ 남은 하루도 파이팅! ", Toast.LENGTH_SHORT).show()
+                         Toast.makeText( myButton.context, " 오늘도 수고하셨어요~ 남은 하루도 파이팅! ", Toast.LENGTH_SHORT).show()
 
                         val database = FirebaseDatabase.getInstance()
                         val challengesRef: DatabaseReference = database.getReference("challenges")
@@ -190,15 +197,16 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
 
 
                         //인증후 서버에 업데이트 -> 반영되면 그걸로 다시 판단
-                        button_value = true
                     } else {
                         // 20미터 밖인 경우의 로직
                         // 디버그 코드 (현재 위치 출력)
                         // Toast.makeText( myButton.context,latitude.toString() + ", " + longitude, Toast.LENGTH_SHORT).show()
                         // 배포용 코드
                         Toast.makeText( myButton.context,"현재 위치가 올바르지 않습니다.", Toast.LENGTH_SHORT).show()
+                        myButton.isEnabled = true
+
                     }
-                }
+                }}
 
             }
             // 다른 뷰에 데이터 바인딩
@@ -361,21 +369,51 @@ class CustomDividerDecoration(context: Context) : RecyclerView.ItemDecoration() 
 
 class LocationChecker(private val context: Context) {
 
-    private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-    fun isWithin20mOfTarget(targetLatitude: Double, targetLongitude: Double): Boolean {
+//    private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
+    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    var distanceInMeters = 2000.0f
+    var currentLocation = Location("").apply {
+        latitude = 0.0
+        longitude = 0.0
+    }
+    fun update(){
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // 권한이 없다면 false 반환
-            return false
-        }
 
-        val currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?: return false
-        val targetLocation = Location("").apply {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+                }
+            return
+        }
+        val locationListener = object : LocationListener {
+            override fun onLocationChanged(location: Location){
+                currentLocation = location
+            }
+        }
+        Log.d("pos test","how many")
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
+
+    }
+    fun isWithin20mOfTarget(targetLatitude: Double, targetLongitude: Double, callback: (Boolean) -> Unit){
+        var targetLocation = Location("").apply {
             latitude = targetLatitude
             longitude = targetLongitude
         }
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // 권한이 없다면 false 반환
+            callback(false)
+            return
+        }
+        val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
 
-        val distanceInMeters = currentLocation.distanceTo(targetLocation)
-        return distanceInMeters <= 20
+        currentLocation = lastKnownLocation ?: Location("").apply {
+            latitude = 0.0
+            longitude = 0.0
+        }
+        val distanceInMeters = targetLocation.distanceTo(currentLocation)
+        callback(distanceInMeters <= 20)
+        Log.d("pos test",currentLocation.latitude.toString() + " "+ currentLocation.longitude.toString())
+
     }
 }
