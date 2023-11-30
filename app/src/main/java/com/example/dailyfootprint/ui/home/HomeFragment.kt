@@ -2,6 +2,7 @@ package com.example.dailyfootprint.ui.home
 
 import FirebaseManager
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -20,8 +21,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,6 +44,7 @@ import com.google.firebase.database.ValueEventListener
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
 
 val exampleChallenge = Challenge(
     challengeCode = "CH001",
@@ -137,31 +139,41 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
             binding.textTitle.text = item.challengeName
             binding.textpos.text = item.location
             val myButton: Button = binding.certifiyButton
-            var button_value = false
 
+            val locationChecker = LocationChecker(myButton.context)
             // 현재 날짜 및 시간
 
+            locationChecker.update()
             if(1==item.successTime[DateUtils.getAdjustedDayOfWeek()]){
-                myButton.background= ContextCompat.getDrawable(myButton.context, R.drawable.round_gray_button)
-                myButton.isEnabled = button_value
-                button_value = true
+                myButton.isEnabled = false
+            }
+            else{
+                myButton.isEnabled = true
             }
 
-            if(!button_value){
+            if(myButton.isEnabled == false){
+
+                myButton.background= ContextCompat.getDrawable(myButton.context, R.drawable.round_gray_button)
+            }
+            else{
+                myButton.background= ContextCompat.getDrawable(myButton.context, R.drawable.round_green_button)
+
+            }
+            if(myButton.isEnabled){
                 myButton.setOnClickListener {
 
-                    val locationChecker = LocationChecker(myButton.context)
 
                     val (latitude, longitude) = item.position
                     Log.d("pos", latitude.toString() + ", "+ longitude.toString())
-                    var isNearby = locationChecker.isWithin20mOfTarget(latitude, longitude)
-                    Log.d("isNearby",isNearby.toString())
+                    locationChecker.isWithin20mOfTarget(latitude, longitude) { isNearby ->
+                        Log.d("isNearby", isNearby.toString())
+
 
                     //test code
                     //var isNearby = true // 가까운지 확인하는 코드
 
                     if (isNearby) {
-                        myButton.isEnabled = button_value
+                        myButton.isEnabled = false
                         // 20미터 이내인 경우의 로직
                         // 디버그 코드 (현재 위치 출력)
                         Toast.makeText( myButton.context, binding.textTitle.text.toString()+" "+myButton.text.toString() + " 버튼이 클릭:true", Toast.LENGTH_SHORT).show()
@@ -185,15 +197,16 @@ class MyAdapter : ListAdapter<Challenge, MyAdapter.ViewHolder>(DiffCallback()) {
 
 
                         //인증후 서버에 업데이트 -> 반영되면 그걸로 다시 판단
-                        button_value = true
                     } else {
                         // 20미터 밖인 경우의 로직
                         // 디버그 코드 (현재 위치 출력)
                         Toast.makeText( myButton.context,latitude.toString() + ", " + longitude, Toast.LENGTH_SHORT).show()
                         // 배포용 코드
 //                        Toast.makeText( myButton.context,"현재 위치가 올바르지 않습니다.", Toast.LENGTH_SHORT).show()
+                        myButton.isEnabled = true
+
                     }
-                }
+                }}
 
             }
             // 다른 뷰에 데이터 바인딩
@@ -357,39 +370,50 @@ class CustomDividerDecoration(context: Context) : RecyclerView.ItemDecoration() 
 class LocationChecker(private val context: Context) {
 
 //    private val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-    fun isWithin20mOfTarget(targetLatitude: Double, targetLongitude: Double): Boolean {
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
+    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    var distanceInMeters = 2000.0f
+    var currentLocation = Location("").apply {
+        latitude = 0.0
+        longitude = 0.0
+    }
+    fun update(){
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // 권한이 없다면 false 반환
-            return false
+
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+                }
+            return
         }
-
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
         val locationListener = object : LocationListener {
-            var latitude = 0.0
-            var longitude = 0.0
-            override fun onLocationChanged(location: Location) {
-                // 새로운 위치 데이터를 사용하여 latitude와 longitude 갱신
-                latitude = location.latitude
-                longitude = location.longitude
-
-                // 갱신된 위치 정보를 사용하는 로직 추가
+            override fun onLocationChanged(location: Location){
+                currentLocation = location
             }
         }
+        Log.d("pos test","how many")
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
 
-        val currentLocation = Location("").apply {
-            latitude = locationListener.latitude
-            longitude = locationListener.longitude
-        }
-        Log.d("currentLocation",currentLocation.toString())
-        val targetLocation = Location("").apply {
+    }
+    fun isWithin20mOfTarget(targetLatitude: Double, targetLongitude: Double, callback: (Boolean) -> Unit){
+        var targetLocation = Location("").apply {
             latitude = targetLatitude
             longitude = targetLongitude
         }
-        val distanceInMeters =targetLocation.distanceTo(currentLocation)
-        Log.d("distanceInMeters",distanceInMeters.toString())
-        return distanceInMeters <= 20
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // 권한이 없다면 false 반환
+            callback(false)
+            return
+        }
+        val lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+
+        currentLocation = lastKnownLocation ?: Location("").apply {
+            latitude = 0.0
+            longitude = 0.0
+        }
+        val distanceInMeters = targetLocation.distanceTo(currentLocation)
+        callback(distanceInMeters <= 20)
+        Log.d("pos test",currentLocation.latitude.toString() + " "+ currentLocation.longitude.toString())
+
     }
 }
