@@ -75,7 +75,7 @@ class ChallengeActivity : AppCompatActivity() {
         binding.challengeviewAddButton.isEnabled = true
         binding.challengeviewAddButton.setOnClickListener {
             if (validateInputs()) {
-                saveValues()
+                addChallenge()
             }
             Log.d(TAG, "ADD BUTTON CLICKED.")
         }
@@ -123,7 +123,7 @@ class ChallengeActivity : AppCompatActivity() {
 
 
 
-    private fun saveValues() {
+    private fun addChallenge() {
         val challengeName = binding.challengeviewNameEdittext.text.toString()
         val locationValue = binding.challengeviewLocationEdittext.text.toString()
         val spinnerValue = binding.challengeviewSelectSpinner.selectedItem.toString()
