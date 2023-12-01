@@ -64,6 +64,8 @@ class ChallengeviewActivity : AppCompatActivity() {
 
         val mAlertDialog = mBuilder
 
+        //mAlertDialog.setCanceledOnTouchOutside(true)
+
         val okButton = mDialogView.findViewById<Button>(R.id.delete_grbtn)
         okButton.setOnClickListener {
             // ChallengeActivity의 멤버 변수로 설정된 currentChallenge를 사용
@@ -108,7 +110,7 @@ class ChallengeviewActivity : AppCompatActivity() {
         }
 
 
-        val dialogContainer = mDialogView.findViewById<LinearLayout>(R.id.dial)
+        val dialogContainer = mDialogView.findViewById<ConstraintLayout>(R.id.dial)
         dialogContainer.setOnClickListener {
             mAlertDialog.dismiss()
             finish()

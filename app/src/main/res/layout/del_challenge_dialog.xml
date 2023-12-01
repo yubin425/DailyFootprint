@@ -2,13 +2,13 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dial"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.dashboard.ChallengeviewActivity" >
 
 
     <LinearLayout
-        android:id="@+id/dial"
         android:layout_width="328dp"
         android:layout_height="160dp"
         android:background="@drawable/dashboard_challengeview_background"

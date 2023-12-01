@@ -1,11 +1,14 @@
 package com.example.dailyfootprint.ui.dashboard
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
@@ -17,6 +20,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.dailyfootprint.ui.challenge.ChallengeActivity
 import com.example.dailyfootprint.databinding.FragmentDashboardBinding
@@ -37,6 +41,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import java.util.Calendar
+import java.util.UUID
 
 class MyAdapter() :
     RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
@@ -150,7 +155,7 @@ class MyAdapter() :
     }
 
 
-    private fun fetchChallenges() {
+    private fun getChallenge() {
         val firebaseDatabaseUrl =
             "https://dailyfootprint-aeac7-default-rtdb.asia-southeast1.firebasedatabase.app/"
         val database = Firebase.database(firebaseDatabaseUrl)
@@ -213,7 +218,7 @@ class MyAdapter() :
 
     fun initialize() {
         initializeUserId()
-        fetchChallenges()
+        getChallenge()
     }
 
     // 3. Return the size of your dataset (invoked by the layout manager)
@@ -296,6 +301,7 @@ class WeeklyCleanupScheduler(private val context: Context) {
     }
 }
 
+@Suppress("DEPRECATION")
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
@@ -306,6 +312,7 @@ class DashboardFragment : Fragment() {
 
     private lateinit var viewAdapter: MyAdapter
     private lateinit var viewManager: LinearLayoutManager
+
 
 
     override fun onCreateView(
