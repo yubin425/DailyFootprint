@@ -7,9 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.dailyfootprint.MainActivity
-import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.ActivityLoginBinding
-import com.example.dailyfootprint.databinding.ActivityStartBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -47,14 +45,14 @@ class LoginActivity : AppCompatActivity() {
             val TAG = "구글 로그인 결과"
             val account = completedTask.getResult(ApiException::class.java)
             Log.d(TAG, account.id!!)
-            firebaseAuthWithGoogle(account)
+            loginUser(account)
         }
         catch (e: ApiException) {
             Log.w(TAG, "signInResult:failed code=" + e.statusCode)
         }
     }
 
-    private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
+    private fun loginUser(acct: GoogleSignInAccount) {
         // val credential = GoogleAuthProvider.getCredential(acct.id, null)
         val idToken = acct.idToken
         when {
