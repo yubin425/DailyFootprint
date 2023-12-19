@@ -71,12 +71,14 @@ class SignUpViewModel : ViewModel() {
     }
 
     private fun containsSpecialCharacter(input: String): Boolean {
-        // Implement your logic to check if the input contains special characters.
-        // Return true if it contains special characters, false otherwise.
+        // Implement your logic to check if the input contains special characters or space.
+        // Return true if it contains special characters or space, false otherwise.
         // You can customize this based on your validation criteria.
-        val regex = Regex("[!@#\$%^&*(),.?\":{}|<>]")
+        val regex = Regex("[!@#\$%^&*(),.?\":{}|<>\\s]")  // Notice the double backslash
         return regex.containsMatchIn(input)
     }
+
+
 
     fun addUser() {
         val uid = FirebaseManager.getFirebaseAuthInstance().uid

@@ -412,7 +412,7 @@ class LocationChecker(private val context: Context) {
             longitude = 0.0
         }
         val distanceInMeters = targetLocation.distanceTo(currentLocation)
-        callback(distanceInMeters <= 20)
+        callback(distanceInMeters <= 50)
         Log.d("pos test",currentLocation.latitude.toString() + " "+ currentLocation.longitude.toString())
 
     }
