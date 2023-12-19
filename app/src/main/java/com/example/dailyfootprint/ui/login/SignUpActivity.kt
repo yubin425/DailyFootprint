@@ -24,7 +24,7 @@ class SignUpActivity : AppCompatActivity() {
 
         // 중복확인 버튼을 누르고 중복인지 확인
         binding.singupviewDuplicateButton.setOnClickListener {
-            viewModel.checkDuplicate(binding.singupviewNameEdittext.text.toString())
+            viewModel.isDuplicate(binding.singupviewNameEdittext.text.toString())
         }
 
         binding.singupviewSignupButton.setOnClickListener {

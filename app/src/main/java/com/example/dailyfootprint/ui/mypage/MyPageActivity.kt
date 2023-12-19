@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.example.dailyfootprint.R
 import com.example.dailyfootprint.databinding.ActivityMyPageBinding
 import com.example.dailyfootprint.ui.login.StartActivity
 import com.google.firebase.database.DataSnapshot
@@ -33,7 +32,7 @@ class MyPageActivity : AppCompatActivity() {
             val currentUser = FirebaseManager.authInstance.currentUser
             if (currentUser != null) {
                 Log.w("quit","current user is not null")
-                deleteUserAccount(currentUser.uid)
+                deleteUser(currentUser.uid)
             } else {
                 Log.w("quit","current user not null")
             }
@@ -42,7 +41,7 @@ class MyPageActivity : AppCompatActivity() {
 
     }
 
-    private fun deleteUserAccount(uid: String) {
+    private fun deleteUser(uid: String) {
         // 현재 사용자의 User 객체 삭제
         FirebaseManager.databaseReference.child("user").child(uid).removeValue()
 

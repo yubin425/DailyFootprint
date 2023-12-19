@@ -35,7 +35,7 @@ class SignUpViewModel : ViewModel() {
         _isUserAdded.value = false
     }
 
-    fun checkDuplicate(input : String) {
+    fun isDuplicate(input : String) {
         // 버튼을 클릭하면 이 함수 실행됨
         userDatabaseReference.orderByChild("userName").equalTo(input)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -71,12 +71,14 @@ class SignUpViewModel : ViewModel() {
     }
 
     private fun containsSpecialCharacter(input: String): Boolean {
-        // Implement your logic to check if the input contains special characters.
-        // Return true if it contains special characters, false otherwise.
+        // Implement your logic to check if the input contains special characters or space.
+        // Return true if it contains special characters or space, false otherwise.
         // You can customize this based on your validation criteria.
-        val regex = Regex("[!@#\$%^&*(),.?\":{}|<>]")
+        val regex = Regex("[!@#\$%^&*(),.?\":{}|<>\\s]")  // Notice the double backslash
         return regex.containsMatchIn(input)
     }
+
+
 
     fun addUser() {
         val uid = FirebaseManager.getFirebaseAuthInstance().uid
