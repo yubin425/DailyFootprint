@@ -35,6 +35,10 @@ class SignUpViewModel : ViewModel() {
         _isUserAdded.value = false
     }
 
+    fun setDuplicateFalse() {
+        _isDuplicate.value = true;
+    }
+
     fun isDuplicate(input : String) {
         // 버튼을 클릭하면 이 함수 실행됨
         userDatabaseReference.orderByChild("userName").equalTo(input)

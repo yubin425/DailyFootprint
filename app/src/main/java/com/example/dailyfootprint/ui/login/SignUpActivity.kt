@@ -20,6 +20,7 @@ class SignUpActivity : AppCompatActivity() {
         // 텍스트가 변경될때마다 유효한지 확인
         binding.singupviewNameEdittext.addTextChangedListener {
             viewModel.checkValid(binding.singupviewNameEdittext.text.toString())
+            viewModel.setDuplicateFalse()
         }
 
         // 중복확인 버튼을 누르고 중복인지 확인
