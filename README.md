@@ -1,5 +1,7 @@
 # 0. Getting Started (시작하기)
 <img src="https://i.ibb.co/9vGRHYx/image-5.png"  alt="배너">
+습관을 들이기는 참 어렵습니다. 기존의 습관 관리 애플리케이션을 사용한다고 해도 가짜로 입력하거나 넘겨버릴 수도 있고, 중도에 포기하기도 쉽습니다. 하루 발자국은 이러한 기존 문제점에서 착안해 개발을 시작했습니다.
+
 <br/>
 <br/>
 
@@ -40,12 +42,12 @@
 # 4. Technology Stack (기술 스택)
 ## 4.1 Language
 |  |  |
-|-----------------|-----------------|
+|-----------------|
 | Kotlin    |
 
 ## 4.2 Backend
 |  |  |  |
-|-----------------|-----------------|-----------------|
+|-----------------|
 | Firebase    |  <img src="https://github.com/user-attachments/assets/1694e458-9bb0-4a0b-8fe6-8efc6e675fa1" alt="Firebase" width="100">    | 10.12.5    |
 
 <br/>
