@@ -1,14 +1,5 @@
-<img src="https://i.ibb.co/9vGRHYx/image-5.png"  alt="배너" width="100%"/>
-
-</a>
-
-<br/>
-<br/>
-
 # 0. Getting Started (시작하기)
-```bash
-$ npm start
-```
+<img src="https://i.ibb.co/9vGRHYx/image-5.png"  alt="배너">
 <br/>
 <br/>
 
